@@ -8,15 +8,19 @@
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "cd client && npm run dev "
+    "dev": "cd client && npm run dev ",
+    "prepare": "husky"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "@commitlint/cli": "^19.7.1",
+    "@commitlint/config-conventional": "^19.7.1",
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
-    "hardhat": "^2.22.18"
+    "hardhat": "^2.22.18",
+    "husky": "^9.1.7"
   },
   "dependencies": {
     "next-themes": "^0.4.4"
