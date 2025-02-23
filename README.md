@@ -13,6 +13,7 @@ This project is a Decentralized Finance (DeFi) application that enables users to
 ## 🚀 Getting Started
 
 ### 1️⃣ Clone the Repository and install dependencies
+
 ```sh
 git clone git@github.com:therogerdev/wave-defi.git
 cd wave-defi
