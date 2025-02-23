@@ -4,7 +4,7 @@
 
 @layer base {
   :root {
-    --background: 0 0% 98%; /* Light background */
+    --background: linear-gradient(to bottom, #f6f2ff, #ede7ff);
     --foreground: 224 71.4% 4.1%; /* Dark text for readability */
 
     --card: 240 20% 12%; /* Slightly lighter background for cards */
@@ -39,10 +39,11 @@
     --chart-5: 27 87% 67%; /* Gold */
 
     --radius: 0.5rem;
+    --font-noto-sans: "Noto Sans", sans-serif;
   }
 
   .dark {
-    --background: 240 20% 10%; /* Dark background */
+    --background: linear-gradient(to bottom, #10062f, #030014);
     --foreground: 210 20% 98%;
 
     --card: 240 20% 8%;
@@ -75,6 +76,7 @@
     --chart-3: 30 80% 55%; /* Orange */
     --chart-4: 280 65% 60%; /* Purple */
     --chart-5: 340 75% 55%; /* Pink */
+    --font-noto-sans: "Noto Sans", sans-serif;
   }
 }
 
@@ -83,6 +85,6 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-[family-name:var(--font-noto-sans)];
   }
 }
