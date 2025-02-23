@@ -26,21 +26,22 @@ async function main() {
     ["DeFiEnergy", "DeFiEnergy"],
     ["NeptuneCoin", "NeptuneCoin"],
     ["AquaSwap", "AquaSwap"],
-    ["PairFactory", "PairFactory"],
+    ["LiquidityPoolFactory", "LiquidityPoolFactory"],
   ];
 
-  let pairFactoryAddress: string = "";
+  let liquidityPoolFactoryAddress: string = "";
+  let tokenPairAddress: string = "";
 
-  // First deploy the initial contracts including PairFactory
-  for (const [contractName, symbol] of smartContracts) {
-    let contractFactory = await ethers.getContractFactory(symbol);
-    let contract = await contractFactory.deploy();
+  // First deploy the initial contracts including LiquidityPoolFactory
+   for (const [contractName, symbol] of smartContracts) {
+    const contractFactory = await ethers.getContractFactory(symbol);
+    const contract = await contractFactory.deploy();
     await contract.waitForDeployment();
 
-    console.log(`${contractName} Contract Address:`, contract.target);
+    console.log(`${contractName} deployed at:`, contract.target);
 
-    if (symbol === "PairFactory") {
-      pairFactoryAddress = contract.target;
+    if (symbol === "LiquidityPoolFactory") {
+      liquidityPoolFactoryAddress = contract.target;
     }
 
     exportContractMetadata({
@@ -50,18 +51,37 @@ async function main() {
     });
   }
 
-  // Then deploy AMMRouter with the stored PairFactory address
+   // Deploy a TokenPair manually for reference (LiquidityPoolFactory will create pairs dynamically)
+   console.log("Deploying a sample TokenPair...");
+   const tokenLiquidityPoolFactory = await ethers.getContractFactory("TokenPair");
+   const tokenPair = await tokenLiquidityPoolFactory.deploy();
+   await tokenPair.waitForDeployment();
+ 
+   tokenPairAddress = tokenPair.target;
+ 
+   console.log("TokenPair deployed at:", tokenPairAddress);
+ 
+   exportContractMetadata({
+     contractName: "TokenPair",
+     contractAddress: tokenPairAddress,
+     contractAbi: tokenPair.interface.formatJson(),
+   });
+
+
+  // Then deploy AMMRouter with the stored LiquidityPoolFactory address
   const routerFactory = await ethers.getContractFactory("AMMRouter");
-  const router = await routerFactory.deploy(pairFactoryAddress);
+  const router = await routerFactory.deploy(liquidityPoolFactoryAddress);
   await router.waitForDeployment();
 
-  console.log("AMM Router Contract Address:", router.target);
+  console.log("AMMRouter deployed at:", router.target);
 
   exportContractMetadata({
     contractName: "AMMRouter",
     contractAddress: router.target,
     contractAbi: router.interface.formatJson(),
   });
+
+  console.log("✅ Deployment to localhost completed successfully!");
 }
 
 main().catch((error) => {

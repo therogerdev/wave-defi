@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.28;
 
-interface IPairFactory {
+interface ILiquidityPoolFactory {
     event PairCreated(
         address indexed tokenA,
         address indexed tokenB,

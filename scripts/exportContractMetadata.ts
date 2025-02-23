@@ -44,16 +44,16 @@ export function exportContractMetadata({
     JSON.stringify(metadata, null, 2)
   );
 
-  // if PAIRFACTORY is deployed, then export the PAIRFACTORY address
+  // if LiquidityPoolFactory is deployed, then export the LiquidityPoolFactory address
   if (contractName === "PairFactory") {
-    const pairFactoryMetadata = {
+    const liquidityPoolFactoryMetadata = {
       name: "PairFactory",
       address: contractAddress,
       abi: JSON.parse(contractAbi),
     };
     fs.writeFileSync(
-      path.join(frontendPath, "PairFactory-address.json"),
-      JSON.stringify({ address: pairFactoryMetadata.address }, null, 2)
+      path.join(frontendPath, "liquidityPoolFactory-address.json"),
+      JSON.stringify({ address: liquidityPoolFactoryMetadata.address }, null, 2)
     );
   }
 

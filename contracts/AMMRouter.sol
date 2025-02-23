@@ -2,13 +2,13 @@
  * @title AMMRouter
  * @dev The AMMRouter contract is the main entry point for interacting with the Automated Market Maker (AMM) functionality. It provides functions for adding and removing liquidity, as well as swapping tokens along a specified path.
  *
- * The contract uses the IPairFactory and ITokenPair interfaces to interact with the underlying token pairs and the AMM functionality.
+ * The contract uses the ILiquidityPoolFactory and ITokenPair interfaces to interact with the underlying token pairs and the AMM functionality.
  */
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.28;
 
 import "../interfaces/IAMMRouter.sol";
-import "../interfaces/IPairFactory.sol";
+import "../interfaces/ILiquidityPoolFactory.sol";
 import "../interfaces/ITokenPair.sol";
 import "./utils/Helper.sol";
 
@@ -18,7 +18,7 @@ contract AMMRouter is IAMMRouter {
 
     constructor(address _factory) {
         factory = _factory;
-        initCodeHash = IPairFactory(factory).INIT_CODE_PAIR_HASH();
+        initCodeHash = ILiquidityPoolFactory(factory).INIT_CODE_PAIR_HASH();
     }
 
     modifier ensure(uint256 deadline) {
@@ -109,8 +109,8 @@ contract AMMRouter is IAMMRouter {
         )
     {
         // Step 1: Create a pair if it doesn't exist
-        if (IPairFactory(factory).getPair(tokenA, tokenB) == address(0)) {
-            IPairFactory(factory).createPair(tokenA, tokenB);
+        if (ILiquidityPoolFactory(factory).getPair(tokenA, tokenB) == address(0)) {
+            ILiquidityPoolFactory(factory).createPair(tokenA, tokenB);
         }
 
         // Step 2: Get Reserves of the pair of tokens

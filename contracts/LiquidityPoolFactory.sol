@@ -2,11 +2,11 @@
 pragma solidity ^0.8.28;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "../interfaces/IPairFactory.sol";
+import "../interfaces/ILiquidityPoolFactory.sol";
 import "./utils/Helper.sol";
 import "./TokenPair.sol";
 
-contract PairFactory is IPairFactory, Ownable {
+contract LiquidityPoolFactory is ILiquidityPoolFactory, Ownable {
     bytes32 public constant INIT_CODE_PAIR_HASH =
         keccak256(abi.encodePacked(type(TokenPair).creationCode));
     address public rewardTo;

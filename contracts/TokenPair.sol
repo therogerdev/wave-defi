@@ -4,7 +4,8 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/math/Math.sol";
 import "../interfaces/ITokenPair.sol";
-import "../interfaces/IPairFactory.sol";
+import "../interfaces/ILiquidityPoolFactory.sol";
+
 
 /**
  * @title TokenPair
@@ -76,7 +77,7 @@ contract TokenPair is ITokenPair, ERC20, ReentrancyGuard {
         private
         returns (bool hasReward)
     {
-        address rewardTo = IPairFactory(factory).rewardTo();
+        address rewardTo = ILiquidityPoolFactory(factory).rewardTo();
         hasReward = rewardTo != address(0);
         uint256 _kLast = kLast; // gas savings
         if (hasReward) {
