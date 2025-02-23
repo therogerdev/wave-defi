@@ -88,3 +88,12 @@
     @apply bg-background text-foreground font-[family-name:var(--font-noto-sans)];
   }
 }
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
