@@ -8,10 +8,9 @@ import {
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
-  NavigationMenuTrigger
+  NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
-
 
 const Navigation: React.FC = () => {
   return (
@@ -20,7 +19,9 @@ const Navigation: React.FC = () => {
         {/* Swap Link */}
         <NavigationMenuItem>
           <Link href="/swap" passHref legacyBehavior>
-            <NavigationMenuLink className={buttonVariants({ variant: "ghost" })}>
+            <NavigationMenuLink
+              className={buttonVariants({ variant: "ghost" })}
+            >
               Swap
             </NavigationMenuLink>
           </Link>
