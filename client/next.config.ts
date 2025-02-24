@@ -6,6 +6,9 @@ const nextConfig: NextConfig = {
     config.resolve.fallback = { fs: false, net: false, tls: false };
     return config;
   },
+  images: {
+    domains: ["raw.githubusercontent.com"],
+  },
 };
 
 export default nextConfig;

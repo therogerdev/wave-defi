@@ -14,7 +14,7 @@
     --popover-foreground: 210 20% 98%;
 
     --primary: 220 90% 55%; /* Neon Blue */
-    --primary-foreground: 210 20% 98%;
+    --primary-foreground: 210 20% 98%; /* White */
 
     --secondary: 220 50% 40%; /* Deep Blue */
     --secondary-foreground: 210 20% 98%;
@@ -82,18 +82,9 @@
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border focus-visible:outline-ring/50;
   }
-  body {
-    @apply bg-background text-foreground font-[family-name:var(--font-noto-sans)];
-  }
-}
-
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
+  html {
+    @apply bg-background text-foreground font-[var(--font-noto-sans)];
   }
 }
