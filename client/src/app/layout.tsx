@@ -1,9 +1,10 @@
+import BackgroundEffect from "@/components/BackgroundEffect";
+import HeaderApp from "@/components/HeaderApp";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Web3Provider } from "@/config/Web3Provider";
 import type { Metadata } from "next";
 import { Noto_Sans, Noto_Sans_Mono } from "next/font/google";
 import "./globals.css";
-import HeaderApp from "@/components/HeaderApp";
-import BackgroundEffect from "@/components/BackgroundEffect";
 
 const notoSans = Noto_Sans({
   variable: "--font-noto-sans",
@@ -28,26 +29,29 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
+        suppressHydrationWarning
         className={`${notoSans.variable} ${notoSansMono.variable} antialiased`}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <div className="absolute top-0 left-0 w-full h-full -z-10">
-            <BackgroundEffect />
-          </div>
+        <Web3Provider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <div className="absolute inset-0 -z-10">
+              <BackgroundEffect />
+            </div>
 
-          <div className="relative z-20">
-            <HeaderApp />
-          </div>
+            <div className=" absolute top-0 inset-x-0 z-50">
+              <HeaderApp />
+            </div>
 
-          <main className="relative z-10 container mx-auto px-4 md:px-8">
-            {children}
-          </main>
-        </ThemeProvider>
+            <main className="relative h-screen  overflow-hidden">
+              {children}
+            </main>
+          </ThemeProvider>
+        </Web3Provider>
       </body>
     </html>
   );

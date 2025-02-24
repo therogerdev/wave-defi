@@ -20,7 +20,7 @@ const Navigation: React.FC = () => {
         <NavigationMenuItem>
           <Link href="/swap" passHref legacyBehavior>
             <NavigationMenuLink
-              className={buttonVariants({ variant: "ghost" })}
+              className={cn(buttonVariants({ variant: "ghost" }), "-mb-2")}
             >
               Swap
             </NavigationMenuLink>
@@ -30,7 +30,7 @@ const Navigation: React.FC = () => {
         {/* Pools Dropdown */}
         <NavigationMenuItem>
           <NavigationMenuTrigger
-            className={buttonVariants({ variant: "ghost" })}
+            className={cn(buttonVariants({ variant: "ghost" }), "-mb-2")}
             aria-label="Open Pools Menu"
           >
             Pools

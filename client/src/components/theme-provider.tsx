@@ -7,7 +7,9 @@ import { useState, useEffect } from "react";
 export function ThemeProvider({
   children,
   ...props
-}: React.ComponentProps<typeof NextThemesProvider>) {
+}: React.ComponentProps<typeof NextThemesProvider> & {
+  children: React.ReactNode;
+}) {
   const [mounted, setMounted] = useState(false);
 
   // during SSR, Next.js will attempt to render all components, including the ThemeProvider. However, the ThemeProvider relies on the use of the `useTheme` hook, which is only available on the client-side.
