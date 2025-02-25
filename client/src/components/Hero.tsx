@@ -67,13 +67,10 @@ export function Hero() {
               per="char"
               speedReveal={4}
               segmentTransition={{ duration: 0.5, ease: "easeOut" }}
+              delay={0}
             >
-              DeFi is the
+              DeFi is the Future
             </TextEffect>
-            <TextLoop className="text-balance text-5xl tracking-tight w-40 ml-2 text-zinc-900 dark:text-zinc-100 sm:text-6xl font-semibold">
-              <span>Future</span>
-              <span>Present</span>
-            </TextLoop>
           </div>
 
           <TextEffect
@@ -85,7 +82,7 @@ export function Hero() {
             speedReveal={0.8}
             segmentTransition={{ duration: 0.5, ease: "easeOut" }}
           >
-            {`Experience the most efficient way to trade and earn in DeFi. 
+            {`
   WaveDeFi offers high-speed swaps, deep liquidity, and transparent decentralized finance solutions.`}
           </TextEffect>
           <div className="mt-10 flex items-center justify-center gap-x-6">

@@ -1,3 +1,4 @@
+
 import BackgroundEffect from "@/components/BackgroundEffect";
 import HeaderApp from "@/components/HeaderApp";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -43,13 +44,13 @@ export default function RootLayout({
               <BackgroundEffect />
             </div>
 
-            <div className=" absolute top-0 inset-x-0 z-50">
+            <div className=" absolute top-0 inset-x-0 z-[9999]">
               <HeaderApp />
             </div>
 
-            <main className="relative h-screen  overflow-hidden">
-              {children}
-            </main>
+            <div className="relative h-screen  overflow-hidden">
+            {children}
+            </div>
           </ThemeProvider>
         </Web3Provider>
       </body>

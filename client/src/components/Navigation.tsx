@@ -18,7 +18,7 @@ const Navigation: React.FC = () => {
       <NavigationMenuList className="flex items-center mt-5 h-full space-x-4 lg:space-x-6 mx-6">
         {/* Swap Link */}
         <NavigationMenuItem>
-          <Link href="/swap" passHref legacyBehavior>
+          <Link href="/swaps" passHref legacyBehavior>
             <NavigationMenuLink
               className={cn(buttonVariants({ variant: "ghost" }), "-mb-2")}
             >

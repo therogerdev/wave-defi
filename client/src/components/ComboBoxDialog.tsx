@@ -10,7 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { CheckIcon, PlusIcon } from "lucide-react";
+import { CheckIcon, ChevronDown } from "lucide-react";
 import { useState } from "react";
 
 import {
@@ -53,17 +53,19 @@ export function ComboBoxDialog({
     <div className="flex items-center justify-center">
       <Dialog>
         <DialogTrigger asChild>
-          <div className="relative flex h-[66px] w-[350px] rounded-full bg-[#232323] px-[28px]">
+          <div className="relative flex h-[66px] w-[350px] rounded-full bg-neutral-200 dark:bg-neutral-100  px-[28px]">
             <div className="flex justify-center items-center hover:cursor-pointer hover:border-accent hover:bg-accent hover:opacity-60 bg-transparent absolute h-16 z-50 w-20 hover:rounded-tr-full hover:rounded-br-full right-0">
-              <PlusIcon className="h-5 w-5 text-white" />
+              <ChevronDown className="h-5 w-5 text-foreground dark:text-zinc-600" />
             </div>
             <div
               className="flex relative flex-1 flex-row-reverse items-center gap-5 cursor-pointer"
               role="button"
               tabIndex={0}
             >
-              <span className="text-left w-full text-white">
-                {value ? options.find((opt) => opt.value === value)?.label : "Select Option"}
+              <span className="text-left w-full text-foreground dark:text-zinc-600">
+                {value
+                  ? options.find((opt) => opt.value === value)?.label
+                  : "Select Option"}
               </span>
             </div>
           </div>
@@ -87,7 +89,10 @@ export function ComboBoxDialog({
                   >
                     {option.label}
                     <CheckIcon
-                      className={cn("ml-auto", value === option.value ? "opacity-100" : "opacity-0")}
+                      className={cn(
+                        "ml-auto",
+                        value === option.value ? "opacity-100" : "opacity-0"
+                      )}
                     />
                   </CommandItem>
                 ))}
