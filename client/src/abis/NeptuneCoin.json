@@ -1,6 +1,7 @@
 {
   "name": "NeptuneCoin",
-  "address": "0xcbEAF3BDe82155F56486Fb5a1072cb8baAf547cc",
+  "address": "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
+  "symbol": "NPT",
   "abi": [
     {
       "type": "constructor",

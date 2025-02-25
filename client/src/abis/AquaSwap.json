@@ -1,6 +1,7 @@
 {
   "name": "AquaSwap",
-  "address": "0x1429859428C0aBc9C2C47C8Ee9FBaf82cFA0F20f",
+  "address": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
+  "symbol": "AQSWP",
   "abi": [
     {
       "type": "constructor",

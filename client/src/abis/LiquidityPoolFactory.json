@@ -1,6 +1,7 @@
 {
   "name": "LiquidityPoolFactory",
-  "address": "0xB0D4afd8879eD9F52b28595d31B441D079B2Ca07",
+  "address": "0x0165878A594ca255338adfa4d48449f69242Eb8F",
+  "symbol": "LiquidityPoolFactory",
   "abi": [
     {
       "type": "constructor",

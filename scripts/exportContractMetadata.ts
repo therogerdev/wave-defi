@@ -6,22 +6,26 @@ const path = require("path");
  * @property {string} contractName - The name of the deployed contract.
  * @property {string} contractAddress - The blockchain address where the contract is deployed.
  * @property {string[]} contractAbi - The Application Binary Interface (ABI) of the contract.
+ * @property {string} contractSymbol - The symbol of the contract.
  */
 
 type ContractMetadata = {
   contractName: string;
   contractAddress: string;
   contractAbi: string;
+  contractSymbol: string; 
 };
 
 export function exportContractMetadata({
   contractName,
   contractAddress,
   contractAbi,
+  contractSymbol,
 }: ContractMetadata): void {
   const metadata = {
     name: contractName,
     address: contractAddress,
+    symbol: contractSymbol,
     abi: JSON.parse(contractAbi),
   };
 
