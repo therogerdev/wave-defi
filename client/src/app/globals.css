@@ -7,7 +7,7 @@
     --background: linear-gradient(to bottom, #f6f2ff, #ede7ff);
     --foreground: 224 71.4% 4.1%; /* Dark text for readability */
 
-    --card: 240 20% 12%; /* Slightly lighter background for cards */
+    --card: 271, 100%, 95%;
     --card-foreground: 210 20% 98%;
 
     --popover: 240 20% 12%;
@@ -28,7 +28,7 @@
     --destructive: 0 84.2% 60.2%; /* Bright Red */
     --destructive-foreground: 210 20% 98%;
 
-    --border: 220 50% 30%;
+    --border: 0, 0%, 100%, 0.6;
     --input: 220 50% 30%;
     --ring: 220 90% 55%; /* Highlight color */
 
@@ -86,5 +86,14 @@
   }
   html {
     @apply bg-background text-foreground font-[var(--font-noto-sans)];
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
   }
 }
