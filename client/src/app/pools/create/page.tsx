@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Check } from "lucide-react";
+import { Check, RotateCw } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAccount, useWriteContract } from "wagmi";
 
@@ -29,17 +29,7 @@ export default function CreatePool() {
         icon: <>❌</>,
         position: "top-center",
         description: "Please select two different tokens",
-        action: (
-          <Button
-            variant={"default"}
-            size={"sm"}
-            onClick={() => router.push("/")}
-          >
-            Go Home
-          </Button>
-        ),
       });
-
       return;
     }
 
@@ -52,29 +42,30 @@ export default function CreatePool() {
       return;
     }
 
-    try {
-      writeContract(
-        {
-          address: LiquidityPoolFactory.address as `0x${string}`,
-          abi: LiquidityPoolFactory.abi,
-          functionName: "createPair",
-          args: [tokenA, tokenB],
+    writeContract(
+      {
+        address: LiquidityPoolFactory.address as `0x${string}`,
+        abi: LiquidityPoolFactory.abi,
+        functionName: "createPair",
+        args: [tokenA, tokenB],
+      },
+      {
+        onSuccess: () => {
+          toast("✅ Pair Created!", { position: "top-center" });
+          setTokenA("");
+          setTokenB("");
+          router.push("/");
         },
-        {
-          onSuccess: (data) => {
-            toast("✅ Pair Created!", { position: "top-center" });
-            setTokenA("");
-            setTokenB("");
-            router.push("/");
-          },
-        }
-      );
-    } catch (error) {
-      toast("❌ Transaction Failed", {
-        description: error instanceof Error ? error.message : "Unknown error",
-      });
-    }
+        onError: (error) => {
+          toast("❌ Transaction Failed", {
+            description: error.message || "An unknown error occurred",
+          });
+        },
+      }
+    );
   };
+
+  console.log(tokenA, tokenB);
 
   return (
     <>
@@ -85,10 +76,23 @@ export default function CreatePool() {
           </div>
           <div className="mx-1 rounded-2xl pt-5 pb-20 border border-slate-100 col-span-3 justify-center grid grid-rows-4 ">
             <div className="flex flex-col  mb-4 row-span-full">
-              <Label className="relative px-3 py-0 text-foreground dark:text-zinc-300 text-2xl font-sans font-semibold ">
+              <div className="flex flex-col w-full justify-end lg:px-20 lg:flex-row gap-y-2">
+                <Button
+                  onClick={() => {
+                    setTokenA("");
+                    setTokenB("");
+                  }}
+                  variant={"outline"}
+                  size={"xs"}
+                >
+                  <RotateCw className="mr-2 h-3.5 w-3.5" />
+                  Reset
+                </Button>
+              </div>
+              <Label className="relative px-3 py-0 text-foreground text-2xl font-sans font-semibold ">
                 Select Pair
               </Label>
-              <Label className="relative px-3 py-1 text-sm text-foreground/60 dark:text-zinc-300 ">
+              <Label className="relative px-3 py-1 text-sm text-foreground/60  ">
                 Select the tokens you want to pair for liquidity provisioning.
                 Earn fees and incentives.
               </Label>
@@ -98,15 +102,15 @@ export default function CreatePool() {
                 title="Select Token"
                 description="Choose a token to create a pair"
                 options={tokensList}
-                defaultValue="sol"
+                defaultValue={tokenA} // Sync with state
                 placeholder="Search token..."
                 onSelect={setTokenA}
               />
               <ComboBoxDialog
                 title="Select Token"
                 description="Choose a token to create a pair"
-                options={tokensList}
-                defaultValue="sol"
+                options={tokensList.filter((token) => token.value !== tokenA)}
+                defaultValue={tokenB} // Sync with state
                 placeholder="Search token..."
                 onSelect={setTokenB}
               />

@@ -11,7 +11,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { CheckIcon, ChevronDown } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
   Command,
@@ -44,6 +44,12 @@ export function ComboBoxDialog({
   const [tempValue, setTempValue] = useState(defaultValue);
   const [isOpen, setIsOpen] = useState(false);
 
+  // Reset value when defaultValue changes
+  useEffect(() => {
+    setValue(defaultValue);
+    setTempValue(defaultValue);
+  }, [defaultValue]);
+
   const handleSelect = (selectedValue: string) => {
     setTempValue(selectedValue);
   };
@@ -75,7 +81,7 @@ export function ComboBoxDialog({
               <span className="text-left w-full text-foreground dark:text-zinc-600">
                 {value
                   ? options.find((opt) => opt.value === value)?.label
-                  : "Select Option"}
+                  : placeholder}
               </span>
             </div>
           </div>
