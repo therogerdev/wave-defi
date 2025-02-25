@@ -41,19 +41,29 @@ export function ComboBoxDialog({
   onSelect,
 }: ComboBoxDialogProps) {
   const [value, setValue] = useState(defaultValue);
+  const [tempValue, setTempValue] = useState(defaultValue); // Holds temporary selection before saving
+  const [isOpen, setIsOpen] = useState(false); // Controls dialog state
 
   const handleSelect = (selectedValue: string) => {
-    setValue(selectedValue === value ? "" : selectedValue);
+    setTempValue(selectedValue);
+  };
+
+  const handleSave = () => {
+    setValue(tempValue);
     if (onSelect) {
-      onSelect(selectedValue);
+      onSelect(tempValue);
     }
+    setIsOpen(false); // Close dialog after saving
   };
 
   return (
     <div className="flex items-center justify-center">
-      <Dialog>
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>
-          <div className="relative flex h-[66px] w-[350px] rounded-full bg-neutral-200 dark:bg-neutral-100  px-[28px]">
+          <div
+            className="relative flex h-[66px] mx-2 w-full lg:min-w-[400px] rounded-full bg-neutral-200 dark:bg-neutral-100 px-[28px]"
+            onClick={() => setIsOpen(true)}
+          >
             <div className="flex justify-center items-center hover:cursor-pointer hover:border-accent hover:bg-accent hover:opacity-60 bg-transparent absolute h-16 z-50 w-20 hover:rounded-tr-full hover:rounded-br-full right-0">
               <ChevronDown className="h-5 w-5 text-foreground dark:text-zinc-600" />
             </div>
@@ -75,14 +85,14 @@ export function ComboBoxDialog({
             <DialogTitle>{title}</DialogTitle>
             <DialogDescription>{description}</DialogDescription>
           </DialogHeader>
-          <Command className="bg-white dark:bg-[#232323] ">
+          <Command className="bg-white dark:bg-[#232323]">
             <CommandInput placeholder={placeholder} />
             <CommandList>
               <CommandEmpty>No options found.</CommandEmpty>
               <CommandGroup className="bg-white dark:bg-[#232323] min-h-64">
                 {options.map((option) => (
                   <CommandItem
-                    className="h-12 hover:cursor-pointer hover:rounded-full px-4"
+                    className="h-12 hover:cursor-pointer hover:rounded-full px-4 first:mt-5"
                     key={option.value}
                     value={option.value}
                     onSelect={() => handleSelect(option.value)}
@@ -91,7 +101,7 @@ export function ComboBoxDialog({
                     <CheckIcon
                       className={cn(
                         "ml-auto",
-                        value === option.value ? "opacity-100" : "opacity-0"
+                        tempValue === option.value ? "opacity-100" : "opacity-0"
                       )}
                     />
                   </CommandItem>
@@ -99,8 +109,11 @@ export function ComboBoxDialog({
               </CommandGroup>
             </CommandList>
           </Command>
-          <DialogFooter>
-            <Button className="bg-accent" type="submit">
+          <DialogFooter className="flex justify-between">
+            <Button variant="ghost" onClick={() => setIsOpen(false)}>
+              Cancel
+            </Button>
+            <Button variant={"wave"} onClick={handleSave}>
               Save changes
             </Button>
           </DialogFooter>
