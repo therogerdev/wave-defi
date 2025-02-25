@@ -5,6 +5,7 @@ import { Web3Provider } from "@/config/Web3Provider";
 import type { Metadata } from "next";
 import { Noto_Sans, Noto_Sans_Mono } from "next/font/google";
 import "./globals.css";
+import { Toaster } from "@/components/ui/sonner";
 
 const notoSans = Noto_Sans({
   variable: "--font-noto-sans",
@@ -49,6 +50,7 @@ export default function RootLayout({
 
             <div className="relative h-screen  overflow-hidden">{children}</div>
           </ThemeProvider>
+          <Toaster position="top-center" />
         </Web3Provider>
       </body>
     </html>

@@ -44,3 +44,11 @@ export const tokenListAtom = atom([
     decimals: 18,
   },
 ]);
+
+export const tokenDropdownOptionsAtom = atom((get) =>
+  get(tokenListAtom).map((token) => ({
+    value: token.address,
+    // label: token.name + " - " +token.symbol  ,
+    label: `(${token.symbol}) - ${token.name}`,
+  }))
+);

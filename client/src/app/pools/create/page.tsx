@@ -1,31 +1,81 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Check } from "lucide-react";
+import { Check, XIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useAccount } from "wagmi";
+import { useAccount, useWriteContract } from "wagmi";
 
 import { ComboBoxDialog } from "@/components/ComboBoxDialog";
 import { PageWrapper } from "@/components/PageWrapper";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-
-const tokenOptions = [
-  { value: "sol", label: "Solana (SOL)" },
-  { value: "usdc", label: "USD Coin (USDC)" },
-  { value: "eth", label: "Ethereum (ETH)" },
-  { value: "btc", label: "Bitcoin (BTC)" },
-  { value: "doge", label: "Dogecoin (DOGE)" },
-];
+import { tokenDropdownOptionsAtom } from "@/store/tokensAtom";
+import { useAtomValue } from "jotai";
+import { useState } from "react";
+import { toast } from "sonner";
+import LiquidityPoolFactory from "@/abis/LiquidityPoolFactory.json";
 
 export default function CreatePool() {
   const { isConnected } = useAccount();
+  const { writeContract, isPending, isError, error } = useWriteContract();
+  const tokensList = useAtomValue(tokenDropdownOptionsAtom);
+  const [tokenA, setTokenA] = useState<string>("");
+  const [tokenB, setTokenB] = useState<string>("");
   const router = useRouter();
 
-  // Token Selection State
-  const handleTokenSelect = (selectedToken: string) => {
-    console.log("Selected Token:", selectedToken);
+  const handleCreatePair = async () => {
+    if (!tokenA || !tokenB || tokenA === tokenB) {
+      toast("Invalid Pair Selection", {
+        icon: <>❌</>,
+        position: "top-center",
+        description: "Please select two different tokens",
+        action: (
+          <Button
+            variant={"default"}
+            size={"sm"}
+            onClick={() => router.push("/")}
+          >
+            Go Home
+          </Button>
+        ),
+      });
+
+      return;
+    }
+
+    if (!isConnected) {
+      toast("Please Connect Wallet", {
+        icon: <>❌</>,
+        position: "top-center",
+        description: "Please connect your wallet to create a pair",
+      });
+      return;
+    }
+
+    try {
+      writeContract(
+        {
+          address: LiquidityPoolFactory.address as `0x${string}`,
+          abi: LiquidityPoolFactory.abi,
+          functionName: "createPair",
+          args: [tokenA, tokenB],
+        },
+        {
+          onSuccess: (data) => {
+            toast("✅ Pair Created!", { position: "top-center" });
+            setTokenA("");
+            setTokenB("");
+            router.push("/");
+          },
+        }
+      );
+    } catch (error) {
+      toast("❌ Transaction Failed", {
+        description: error instanceof Error ? error.message : "Unknown error",
+      });
+    }
   };
+
   return (
     <>
       <PageWrapper className="">
@@ -47,25 +97,25 @@ export default function CreatePool() {
               <ComboBoxDialog
                 title="Select Token"
                 description="Choose a token to create a pair"
-                options={tokenOptions}
+                options={tokensList}
                 defaultValue="sol"
                 placeholder="Search token..."
-                onSelect={handleTokenSelect}
+                onSelect={setTokenA}
               />
               <ComboBoxDialog
                 title="Select Token"
                 description="Choose a token to create a pair"
-                options={tokenOptions}
+                options={tokensList}
                 defaultValue="sol"
                 placeholder="Search token..."
-                onSelect={handleTokenSelect}
+                onSelect={setTokenB}
               />
             </div>
             <div className="w-full flex justify-start">
               <CreatePoolFees />
             </div>
             <div className="px-3">
-              <Button variant={"wave"} size={"lg"}>
+              <Button onClick={handleCreatePair} variant={"wave"} size={"lg"}>
                 Create Pool
               </Button>
             </div>

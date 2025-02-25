@@ -41,8 +41,8 @@ export function ComboBoxDialog({
   onSelect,
 }: ComboBoxDialogProps) {
   const [value, setValue] = useState(defaultValue);
-  const [tempValue, setTempValue] = useState(defaultValue); // Holds temporary selection before saving
-  const [isOpen, setIsOpen] = useState(false); // Controls dialog state
+  const [tempValue, setTempValue] = useState(defaultValue);
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleSelect = (selectedValue: string) => {
     setTempValue(selectedValue);
@@ -53,7 +53,7 @@ export function ComboBoxDialog({
     if (onSelect) {
       onSelect(tempValue);
     }
-    setIsOpen(false); // Close dialog after saving
+    setIsOpen(false);
   };
 
   return (
