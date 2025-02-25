@@ -1,10 +1,11 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Check, XIcon } from "lucide-react";
+import { Check } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAccount, useWriteContract } from "wagmi";
 
+import LiquidityPoolFactory from "@/abis/LiquidityPoolFactory.json";
 import { ComboBoxDialog } from "@/components/ComboBoxDialog";
 import { PageWrapper } from "@/components/PageWrapper";
 import { Label } from "@/components/ui/label";
@@ -13,7 +14,6 @@ import { tokenDropdownOptionsAtom } from "@/store/tokensAtom";
 import { useAtomValue } from "jotai";
 import { useState } from "react";
 import { toast } from "sonner";
-import LiquidityPoolFactory from "@/abis/LiquidityPoolFactory.json";
 
 export default function CreatePool() {
   const { isConnected } = useAccount();
