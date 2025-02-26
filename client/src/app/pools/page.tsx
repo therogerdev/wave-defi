@@ -1,9 +1,11 @@
 "use client";
 import { PageWrapper } from "@/components/PageWrapper";
-import PoolItem from "@/components/PoolItem";
+import PoolItem from "@/components/Pool/PoolItem";
+import { Button } from "@/components/ui/button";
 import { pairListAtom } from "@/store/pairListAtom";
 import { useAtomValue } from "jotai";
-import * as React from "react";
+import { ArrowRight } from "lucide-react";
+import Link from "next/link";
 
 export default function PoolPage() {
   const tokenPairs = useAtomValue(pairListAtom);
@@ -11,7 +13,15 @@ export default function PoolPage() {
   return (
     <PageWrapper>
       {tokenPairs.length === 0 ? (
-        <p>No pools found.</p>
+        <>
+          <p>No pools found.</p>
+          <Link href={"/pools/create"} passHref>
+            <Button variant={"wave"}>
+              <ArrowRight className="mr-2 h-4 w-4" />
+              Go To Create Pool
+            </Button>
+          </Link>
+        </>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           {tokenPairs.map((pair, index) => (

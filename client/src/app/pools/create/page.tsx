@@ -1,13 +1,13 @@
 "use client";
-
 import { Button } from "@/components/ui/button";
-import { Check, RotateCw } from "lucide-react";
+import { Check, Plus, RotateCw } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAccount, useWriteContract } from "wagmi";
 
 import LiquidityPoolFactory from "@/abis/LiquidityPoolFactory.json";
 import { ComboBoxDialog } from "@/components/ComboBoxDialog";
 import { PageWrapper } from "@/components/PageWrapper";
+import { validatePair } from "@/components/Pool/utils/validateToken";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { tokenDropdownOptionsAtom } from "@/store/tokensAtom";
@@ -23,25 +23,12 @@ export default function CreatePool() {
   const [tokenB, setTokenB] = useState<string>("");
   const router = useRouter();
 
-  const handleCreatePair = async () => {
-    if (!tokenA || !tokenB || tokenA === tokenB) {
-      toast("Invalid Pair Selection", {
-        icon: <>❌</>,
-        position: "top-center",
-        description: "Please select two different tokens",
-      });
-      return;
-    }
+  const resetSelection = () => {
+    setTokenA("");
+    setTokenB("");
+  };
 
-    if (!isConnected) {
-      toast("Please Connect Wallet", {
-        icon: <>❌</>,
-        position: "top-center",
-        description: "Please connect your wallet to create a pair",
-      });
-      return;
-    }
-
+  const executeCreatePair = () => {
     writeContract(
       {
         address: LiquidityPoolFactory.address as `0x${string}`,
@@ -51,18 +38,31 @@ export default function CreatePool() {
       },
       {
         onSuccess: () => {
-          toast("✅ Pair Created!", { position: "top-center" });
-          setTokenA("");
-          setTokenB("");
-          router.push("/");
+          toast("✅ Pair Created!");
+          resetSelection();
+          router.push("/pools");
         },
         onError: (error) => {
-          toast("❌ Transaction Failed", {
-            description: error.message || "An unknown error occurred",
-          });
+          console.error("Transaction Failed:", error);
+          toast("❌ Transaction Failed", { description: error.message });
         },
       }
     );
+  };
+
+  const handleCreatePair = async () => {
+    if (!isConnected) {
+      toast("Please Connect Wallet", {
+        description: "Connect your wallet to create a pair",
+      });
+      return;
+    }
+
+    if (!validatePair(tokenA, tokenB)) {
+      return;
+    }
+
+    executeCreatePair();
   };
 
   console.log(tokenA, tokenB);
@@ -78,12 +78,10 @@ export default function CreatePool() {
             <div className="flex flex-col  mb-4 row-span-full">
               <div className="flex flex-col w-full justify-end lg:px-20 lg:flex-row gap-y-2">
                 <Button
-                  onClick={() => {
-                    setTokenA("");
-                    setTokenB("");
-                  }}
+                  onClick={resetSelection}
                   variant={"outline"}
                   size={"xs"}
+                  disabled={tokenA === "" && tokenB === ""}
                 >
                   <RotateCw className="mr-2 h-3.5 w-3.5" />
                   Reset
@@ -102,7 +100,7 @@ export default function CreatePool() {
                 title="Select Token"
                 description="Choose a token to create a pair"
                 options={tokensList}
-                defaultValue={tokenA} // Sync with state
+                defaultValue={tokenA}
                 placeholder="Search token..."
                 onSelect={setTokenA}
               />
@@ -110,7 +108,7 @@ export default function CreatePool() {
                 title="Select Token"
                 description="Choose a token to create a pair"
                 options={tokensList.filter((token) => token.value !== tokenA)}
-                defaultValue={tokenB} // Sync with state
+                defaultValue={tokenB}
                 placeholder="Search token..."
                 onSelect={setTokenB}
               />
@@ -119,7 +117,17 @@ export default function CreatePool() {
               <CreatePoolFees />
             </div>
             <div className="px-3">
-              <Button onClick={handleCreatePair} variant={"wave"} size={"lg"}>
+              <Button
+                disabled={isPending}
+                onClick={handleCreatePair}
+                variant={"wave"}
+                size={"lg"}
+              >
+                {isPending ? (
+                  <RotateCw className="animate-spin h-3.5 w-3.5" />
+                ) : (
+                  <Plus className="h-3.5 w-3.5" />
+                )}
                 Create Pool
               </Button>
             </div>
