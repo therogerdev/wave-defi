@@ -106,9 +106,23 @@ const PoolItem: React.FC<Pool> = ({ pairAddress, tokenA, tokenB }) => {
           </ul>
         </CardContent>
         <CardFooter>
-          <Button className="w-full" size={"lg"} variant="wave">
-            Approve
-          </Button>
+          {allowanceTokenA === BigInt(0) && allowanceTokenB === BigInt(0) ? (
+            <Button className="w-full" size={"lg"} variant="wave">
+              Approve
+            </Button>
+          ) : (
+            <div className="flex justify-between space-x-2">
+              <Button variant={"wave"} className="w-full">
+                Add Liquidity
+              </Button>
+              <Button
+                variant={"outline"}
+                className="w-full border-muted-foreground text-muted-foreground dark:text-foreground"
+              >
+                Remove Liquidity
+              </Button>
+            </div>
+          )}
         </CardFooter>
       </Card>
     </div>
