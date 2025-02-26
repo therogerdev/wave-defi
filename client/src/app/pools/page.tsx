@@ -2,13 +2,23 @@
 import { PageWrapper } from "@/components/PageWrapper";
 import PoolItem from "@/components/Pool/PoolItem";
 import { Button } from "@/components/ui/button";
-import { pairListAtom } from "@/store/pairListAtom";
-import { useAtomValue } from "jotai";
+import { fetchPools, pairListAtom } from "@/store/pairListAtom";
+import { useAtom } from "jotai";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
+import { useEffect } from "react";
 
 export default function PoolPage() {
-  const tokenPairs = useAtomValue(pairListAtom);
+  const [tokenPairs, setTokenPairs] = useAtom(pairListAtom);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const pools = await fetchPools();
+      setTokenPairs(pools);
+    };
+
+    fetchData();
+  }, [setTokenPairs]);
 
   return (
     <PageWrapper>
