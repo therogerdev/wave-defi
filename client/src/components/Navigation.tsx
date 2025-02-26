@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
 const Navigation: React.FC = () => {
   return (
     <NavigationMenu delayDuration={0}>
-      <NavigationMenuList className="flex items-center mt-5 h-full space-x-4 lg:space-x-6 mx-6">
+      <NavigationMenuList className="hidden md:flex items-center mt-5 h-full space-x-4 lg:space-x-6 mx-6">
         {/* Swap Link */}
         <NavigationMenuItem>
           <Link href="/swaps" passHref legacyBehavior>

@@ -40,15 +40,17 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <div className="absolute inset-0 -z-10">
-              <BackgroundEffect />
+            <div className="relative">
+              <div className="absolute inset-0 overflow-hidden">
+                <BackgroundEffect />
+              </div>
+              <div className="absolute inset-x-0 h-16 z-[9999]">
+                <HeaderApp />
+              </div>
+              <div className="relative w-full min-h-screen md:h-screen overflow-hidden">
+                {children}
+              </div>
             </div>
-
-            <div className=" absolute top-0 inset-x-0 z-[9999]">
-              <HeaderApp />
-            </div>
-
-            <div className="relative h-screen  overflow-hidden">{children}</div>
           </ThemeProvider>
           <Toaster position="top-center" />
         </Web3Provider>

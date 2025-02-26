@@ -12,13 +12,13 @@ const HeaderApp: React.FC = () => {
   const { theme } = useTheme();
   return (
     <>
-      <header className="flex h-16 px-4 bg-transparent  items-start">
-        <Link href="/" className="flex items-center space-x-2">
+      <header className="flex h-16 px-4 bg-transparent items-start">
+        <Link href="/" className="flex items-center ">
           <Image
             src="/wavedefi-logo-nobg.png"
             alt="Logo"
-            width={80}
-            height={80}
+            width={64}
+            height={64}
             className="mr-4"
           />
         </Link>
@@ -26,8 +26,7 @@ const HeaderApp: React.FC = () => {
         <Navigation />
         <div className="ml-auto py-1  flex items-end  h-full space-x-4">
           <ConnectKitButton theme={theme === "dark" ? "midnight" : "soft"} />
-
-          <ThemeToggle />
+          <ThemeToggle  />
         </div>
       </header>
     </>
