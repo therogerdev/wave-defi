@@ -1,5 +1,6 @@
 "use client";
 import { PageWrapper } from "@/components/PageWrapper";
+import ApproveLpDialog from "@/components/Pool/ApproveLpDialog";
 import PoolItem from "@/components/Pool/PoolItem";
 import { Button } from "@/components/ui/button";
 import { fetchPools, pairListAtom } from "@/store/pairListAtom";
@@ -37,12 +38,15 @@ export default function PoolPage() {
           {tokenPairs.map((pair, index) => (
             <PoolItem
               key={index}
-              tokenA={pair.tokenA.symbol}
-              tokenB={pair.tokenB.symbol}
+              pairAddress={pair.pairAddress}
+              tokenA={pair.tokenA}
+              tokenB={pair.tokenB}
             />
           ))}
         </div>
       )}
+
+      <ApproveLpDialog />
     </PageWrapper>
   );
 }

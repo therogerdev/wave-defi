@@ -1,3 +1,4 @@
+import AMMRouter from "@/abis/AMMRouter.json";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Card,
@@ -7,17 +8,33 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { handleCopy } from "@/lib/utils";
+import { formatNumber, handleCopy } from "@/lib/utils";
+import { Pool } from "@/store/pairListAtom";
+import { tokenMapAtom } from "@/store/tokensAtom";
+import { useAtomValue } from "jotai";
 import { Copy } from "lucide-react";
+import { useAccount, useReadContract } from "wagmi";
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 
-interface PoolItemProps {
-  tokenA: string;
-  tokenB: string;
-}
+const PoolItem: React.FC<Pool> = ({ pairAddress, tokenA, tokenB }) => {
+  const { address: walletAddress, isConnected } = useAccount();
+  const tokens = useAtomValue(tokenMapAtom);
+  const tokenAAbi = tokens[tokenA.address].abi;
+  const tokenBAbi = tokens[tokenB.address].abi;
+  const { data: allowanceTokenA } = useReadContract({
+    address: pairAddress,
+    abi: tokenAAbi,
+    functionName: "allowance",
+    args: [walletAddress, AMMRouter.address],
+  });
+  const { data: allowanceTokenB } = useReadContract({
+    address: pairAddress,
+    abi: tokenAAbi,
+    functionName: "allowance",
+    args: [walletAddress, AMMRouter.address],
+  });
 
-const PoolItem: React.FC<PoolItemProps> = ({ tokenA, tokenB }) => {
   return (
     <div>
       <Card>
@@ -25,16 +42,18 @@ const PoolItem: React.FC<PoolItemProps> = ({ tokenA, tokenB }) => {
           <CardTitle className="flex ">
             <Avatar className="-mr-4 ">
               <AvatarImage />
-              <AvatarFallback className="bg-red-300">{tokenA}</AvatarFallback>
+              <AvatarFallback className="bg-red-300">
+                {tokenA.symbol}
+              </AvatarFallback>
             </Avatar>
             <Avatar>
               <AvatarImage />
               <AvatarFallback className="bg-orange-500">
-                {tokenB}
+                {tokenB.symbol}
               </AvatarFallback>
             </Avatar>
           </CardTitle>
-          <CardDescription>{`${tokenA}/${tokenB}`}</CardDescription>
+          <CardDescription>{`${tokenA.symbol}/${tokenB.symbol}`}</CardDescription>
         </CardHeader>
         <CardContent>
           <ul>
@@ -49,6 +68,23 @@ const PoolItem: React.FC<PoolItemProps> = ({ tokenA, tokenB }) => {
                 Total Liquidity:
               </Label>
               <span className="text-foreground">1239.3235</span>
+            </li>
+            <li className="flex justify-between px-2 space-y-2">
+              <Label className="text-muted-foreground font-semibold text-md">
+                {tokenA.symbol} Allowance:
+              </Label>
+              <span className="text-foreground">
+                {" "}
+                {formatNumber(allowanceTokenA as bigint)}
+              </span>
+            </li>
+            <li className="flex justify-between px-2 space-y-2">
+              <Label className="text-muted-foreground font-semibold text-md">
+                {tokenB.symbol} Allowance:
+              </Label>
+              <span className="text-foreground">
+                {formatNumber(allowanceTokenB as bigint)}
+              </span>
             </li>
             <li className="flex items-center justify-between px-2 space-y-2">
               <Label className="text-muted-foreground font-semibold text-md">
