@@ -1,17 +1,19 @@
-import { atom } from "jotai";
-import { Contract, JsonRpcProvider } from "ethers";
+import AquaSwap from "@/abis/AquaSwap.json";
 import LiquidityPoolFactory from "@/abis/LiquidityPoolFactory.json";
 import TokenPairAbi from "@/abis/TokenPair.json";
 import WaveToken from "@/abis/WaveToken.json";
-import AquaSwap from "@/abis/AquaSwap.json";
+import { Contract, JsonRpcProvider } from "ethers";
+import { atom } from "jotai";
 
 const provider = new JsonRpcProvider(process.env.NEXT_PUBLIC_RPC_URL);
 
-interface Token {
+export interface Token {
   symbol: string;
+  address: `0x${string}`;
 }
 
-interface Pool {
+export interface Pool {
+  pairAddress: `0x${string}`;
   tokenA: Token;
   tokenB: Token;
 }
@@ -46,8 +48,8 @@ export const fetchPools = async (): Promise<Pool[]> => {
 
       allPairs.push({
         pairAddress,
-        tokenA: { symbol: tokenASymbol },
-        tokenB: { symbol: tokenBSymbol },
+        tokenA: { symbol: tokenASymbol, address: tokenA },
+        tokenB: { symbol: tokenBSymbol, address: tokenB },
       });
     }
 
@@ -62,5 +64,9 @@ export const fetchPools = async (): Promise<Pool[]> => {
 };
 
 export const pairListAtom = atom<
-  { tokenA: { symbol: string }; tokenB: { symbol: string } }[]
+  {
+    pairAddress: `0x${string}`;
+    tokenA: { symbol: string; address: `0x${string}` };
+    tokenB: { symbol: string; address: `0x${string}` };
+  }[]
 >([]);

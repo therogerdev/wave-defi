@@ -1,6 +1,7 @@
 import { clsx, type ClassValue } from "clsx";
 import { toast } from "sonner";
 import { twMerge } from "tailwind-merge";
+import { formatUnits } from "viem";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -28,3 +29,15 @@ export const handleCopy = (text: string, label: string = "") => {
     position: "top-center",
   });
 };
+
+/**
+ * Formats a bigint value as a compact number string with up to 2 decimal places.
+ * @param value - The bigint value to format.
+ * @returns A formatted number string.
+ */
+
+export const formatNumber = (value: bigint) =>
+  new Intl.NumberFormat("en-US", {
+    notation: "compact",
+    maximumFractionDigits: 2,
+  }).format(Number(formatUnits(value, 18)));
