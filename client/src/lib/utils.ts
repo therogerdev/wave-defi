@@ -19,12 +19,12 @@ export const getInitials = (firstName: string, lastName: string) => {
  * @param label A label to display in the toast notification (e.g., "Token", "Address").
  */
 
-export const handleCopy = (text: string, label: string = "Copied") => {
+export const handleCopy = (text: string, label: string = "") => {
   if (!text) return;
 
   navigator.clipboard.writeText(text);
   toast("Copied to clipboard", {
-    description: `${label}: ${text}`,
+    description: `${label && label + ":"} ${text}`,
     position: "top-center",
   });
 };
