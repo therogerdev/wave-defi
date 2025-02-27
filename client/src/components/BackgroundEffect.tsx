@@ -7,10 +7,10 @@ const BackgroundEffect: React.FC = () => {
 
   return (
     <div
-      className={`absolute -z-10 top-0 left-0 w-full h-full transition-all duration-500 ${
+      className={`fixed -z-10 top-0 left-0 w-full min-h-screen transition-all duration-500 ${
         theme === "dark"
-          ? "bg-gradient-to-b from-[#10062F] to-[#030014]" // Dark Mode Background
-          : "bg-gradient-to-b from-[#F6F2FF] to-[#EDE7FF]" // Light Mode Background
+          ? "bg-gradient-to-b from-[#10062F] to-[#030014]"
+          : "bg-gradient-to-b from-[#F6F2FF] to-[#EDE7FF]"
       }`}
     >
       {/* Radial Glow Effect */}

@@ -1,11 +1,11 @@
 import BackgroundEffect from "@/components/BackgroundEffect";
 import HeaderApp from "@/components/HeaderApp";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "@/components/ui/sonner";
 import { Web3Provider } from "@/config/Web3Provider";
 import type { Metadata } from "next";
 import { Noto_Sans, Noto_Sans_Mono } from "next/font/google";
 import "./globals.css";
-import { Toaster } from "@/components/ui/sonner";
 
 const notoSans = Noto_Sans({
   variable: "--font-noto-sans",
@@ -47,7 +47,8 @@ export default function RootLayout({
               <div className="absolute inset-x-0 h-16 z-[9999]">
                 <HeaderApp />
               </div>
-              <div className="relative w-full min-h-screen md:h-screen overflow-hidden">
+              <div className="relative w-full min-h-screen md:h-screen">
+                {" "}
                 {children}
               </div>
             </div>

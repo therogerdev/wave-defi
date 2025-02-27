@@ -3,9 +3,5 @@ export default function PoolsLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <main className="w-full relative z-50 flex flex-col items-center justify-center ">
-      {children}
-    </main>
-  );
+  return <main className="min-h-screen overflow-y-auto">{children}</main>;
 }

@@ -26,7 +26,7 @@ const HeaderApp: React.FC = () => {
         <Navigation />
         <div className="ml-auto py-1  flex items-end  h-full space-x-4">
           <ConnectKitButton theme={theme === "dark" ? "midnight" : "soft"} />
-          <ThemeToggle  />
+          <ThemeToggle />
         </div>
       </header>
     </>
