@@ -2,7 +2,7 @@ const { ethers } = require("hardhat");
 const { exportContractMetadata } = require("./exportContractMetadata");
 
 async function main() {
-  const [deployer] = await ethers.getSigners();
+  const [signers] = await ethers.getSigners();
   
   const smartContracts = [
     ["RogerToken", "RGR"],
