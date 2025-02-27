@@ -1,4 +1,3 @@
-import AMMRouter from "@/abis/AMMRouter.json";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Card,
@@ -8,46 +7,47 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { formatNumber, handleCopy } from "@/lib/utils";
-import { Pool } from "@/store/pairListAtom";
-import { tokenMapAtom } from "@/store/tokensAtom";
-import { useAtomValue } from "jotai";
+import { handleCopy } from "@/lib/utils";
 import { Copy } from "lucide-react";
-import { useAccount, useReadContract } from "wagmi";
+import { memo, useCallback, useState } from "react";
+import { useAccount } from "wagmi";
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";
+import ApproveLpDialog from "./ApproveLpDialog";
 
-const PoolItem: React.FC<Pool> = ({ pairAddress, tokenA, tokenB }) => {
-  const { address: walletAddress, isConnected } = useAccount();
-  const tokens = useAtomValue(tokenMapAtom);
-  const tokenAAbi = tokens[tokenA.address].abi;
-  const tokenBAbi = tokens[tokenB.address].abi;
-  const { data: allowanceTokenA } = useReadContract({
-    address: pairAddress,
-    abi: tokenAAbi,
-    functionName: "allowance",
-    args: [walletAddress, AMMRouter.address],
+import AMMRouter from "@/abis/AMMRouter.json";
+import { Pool } from "@/store/pairListAtom";
+import { useTokenAllowances } from "@/useTokenAllowances";
+import TokenAllowance from "../TokenAllowance";
+
+const routerAddress = AMMRouter.address as `0x${string}`;
+
+const PoolItem = ({ pairAddress, tokenA, tokenB }: Pool) => {
+  const { address: walletAddress } = useAccount();
+  const [openDialog, setOpenDialog] = useState(false);
+
+  // Custom Hook for Allowances
+  const { allowanceTokenA, allowanceTokenB } = useTokenAllowances({
+    tokenA,
+    tokenB,
+    walletAddress,
+    routerAddress,
   });
-  const { data: allowanceTokenB } = useReadContract({
-    address: pairAddress,
-    abi: tokenAAbi,
-    functionName: "allowance",
-    args: [walletAddress, AMMRouter.address],
-  });
+  const toggleDialog = useCallback(() => setOpenDialog((prev) => !prev), []);
 
   return (
     <div>
-      <Card>
+      <Card className="w-full">
         <CardHeader className="flex flex-row justify-between items-center">
           <CardTitle className="flex ">
             <Avatar className="-mr-4 ">
-              <AvatarImage />
+              <AvatarImage src="" alt={tokenA.symbol} />
               <AvatarFallback className="bg-red-300">
                 {tokenA.symbol}
               </AvatarFallback>
             </Avatar>
             <Avatar>
-              <AvatarImage />
+              <AvatarImage src="" alt={tokenB.symbol} />
               <AvatarFallback className="bg-orange-500">
                 {tokenB.symbol}
               </AvatarFallback>
@@ -69,54 +69,42 @@ const PoolItem: React.FC<Pool> = ({ pairAddress, tokenA, tokenB }) => {
               </Label>
               <span className="text-foreground">1239.3235</span>
             </li>
-            <li className="flex justify-between px-2 space-y-2">
-              <Label className="text-muted-foreground font-semibold text-md">
-                {tokenA.symbol} Allowance:
-              </Label>
-              <span className="text-foreground">
-                {" "}
-                {formatNumber(allowanceTokenA as bigint)}
-              </span>
-            </li>
-            <li className="flex justify-between px-2 space-y-2">
-              <Label className="text-muted-foreground font-semibold text-md">
-                {tokenB.symbol} Allowance:
-              </Label>
-              <span className="text-foreground">
-                {formatNumber(allowanceTokenB as bigint)}
-              </span>
-            </li>
+            <TokenAllowance token={tokenA} allowance={allowanceTokenA} />
+            <TokenAllowance token={tokenB} allowance={allowanceTokenB} />
             <li className="flex items-center justify-between px-2 space-y-2">
               <Label className="text-muted-foreground font-semibold text-md">
                 Address:
               </Label>
               <span className="text-foreground max-w-full truncate text-ellipsis w-28">
                 <Button
-                  onClick={() =>
-                    handleCopy("0x2039482093840238409238402384029384029384")
-                  }
-                  size={"icon"}
+                  onClick={() => handleCopy(pairAddress)}
+                  size="icon"
                   className="bg-accent mr-2"
                 >
                   <Copy className="icon" />
                 </Button>
-                0x2039482093840238409238402384029384029384
+                {pairAddress}
               </span>
             </li>
           </ul>
         </CardContent>
         <CardFooter>
           {allowanceTokenA === BigInt(0) && allowanceTokenB === BigInt(0) ? (
-            <Button className="w-full" size={"lg"} variant="wave">
+            <Button
+              onClick={toggleDialog}
+              className="w-full"
+              size="lg"
+              variant="wave"
+            >
               Approve
             </Button>
           ) : (
-            <div className="flex justify-between space-x-2">
-              <Button variant={"wave"} className="w-full">
+            <div className="flex w-full justify-between space-x-2">
+              <Button variant="wave" className="w-full">
                 Add Liquidity
               </Button>
               <Button
-                variant={"outline"}
+                variant="outline"
                 className="w-full border-muted-foreground text-muted-foreground dark:text-foreground"
               >
                 Remove Liquidity
@@ -125,8 +113,15 @@ const PoolItem: React.FC<Pool> = ({ pairAddress, tokenA, tokenB }) => {
           )}
         </CardFooter>
       </Card>
+      <ApproveLpDialog
+        tokenA={tokenA}
+        tokenB={tokenB}
+        open={openDialog}
+        pairAddress={pairAddress}
+        setOpen={setOpenDialog}
+      />
     </div>
   );
 };
 
-export default PoolItem;
+export default memo(PoolItem);

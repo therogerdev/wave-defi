@@ -12,7 +12,7 @@ const InfoTooltip = ({ message }: { message: string }) => {
       <Tooltip>
         <TooltipTrigger asChild>
           <span className="cursor-pointer">
-            <Info className="w-3.5 h-3.5 text-muted-foreground hover:text-foreground" />
+            <Info className="w-3 h-3 text-muted-foreground hover:text-foreground" />
           </span>
         </TooltipTrigger>
         <TooltipContent className="bg-card max-w-64 border border-border text-foreground rounded-md shadow-md">
