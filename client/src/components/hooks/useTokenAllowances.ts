@@ -1,7 +1,7 @@
 import { useReadContract } from "wagmi";
 import { useAtomValue } from "jotai";
 import { tokenMapAtom } from "@/store/tokensAtom";
-import { Token } from "./store/pairListAtom";
+import { Token } from "../../store/pairListAtom";
 
 interface TokenAllowances {
   tokenA: Token;

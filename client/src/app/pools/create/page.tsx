@@ -65,8 +65,6 @@ export default function CreatePool() {
     executeCreatePair();
   };
 
-  console.log(tokenA, tokenB);
-
   return (
     <>
       <PageWrapper className="">

@@ -17,7 +17,7 @@ import ApproveLpDialog from "./ApproveLpDialog";
 
 import AMMRouter from "@/abis/AMMRouter.json";
 import { Pool } from "@/store/pairListAtom";
-import { useTokenAllowances } from "@/useTokenAllowances";
+import { useTokenAllowances } from "@/components/hooks/useTokenAllowances";
 import TokenAllowance from "../TokenAllowance";
 
 const routerAddress = AMMRouter.address as `0x${string}`;
@@ -37,7 +37,7 @@ const PoolItem = ({ pairAddress, tokenA, tokenB }: Pool) => {
 
   return (
     <div>
-      <Card className="w-full">
+      <Card className="w-full dark:hover:dark:bg-zinc-800/70 hover:bg-zinc-800/10">
         <CardHeader className="flex flex-row justify-between items-center">
           <CardTitle className="flex ">
             <Avatar className="-mr-4 ">
@@ -53,29 +53,29 @@ const PoolItem = ({ pairAddress, tokenA, tokenB }: Pool) => {
               </AvatarFallback>
             </Avatar>
           </CardTitle>
-          <CardDescription>{`${tokenA.symbol}/${tokenB.symbol}`}</CardDescription>
+          <CardDescription className="font-bold text-lg">{`${tokenA.symbol}/${tokenB.symbol}`}</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="">
           <ul>
             <li className="flex justify-between px-2 space-y-2">
-              <Label className="text-muted-foreground font-semibold text-md">
+              <Label className="text-muted-foreground font-bold text-md">
                 Reserve:
               </Label>
-              <span className="text-foreground">1239.3235</span>
+              <span className="text-foreground text-sm">1239.3235</span>
             </li>
             <li className="flex justify-between px-2 space-y-2">
-              <Label className="text-muted-foreground font-semibold text-md">
+              <Label className="text-muted-foreground font-bold text-md">
                 Total Liquidity:
               </Label>
-              <span className="text-foreground">1239.3235</span>
+              <span className="text-foreground text-sm">1239.3235</span>
             </li>
             <TokenAllowance token={tokenA} allowance={allowanceTokenA} />
             <TokenAllowance token={tokenB} allowance={allowanceTokenB} />
             <li className="flex items-center justify-between px-2 space-y-2">
-              <Label className="text-muted-foreground font-semibold text-md">
+              <Label className="text-muted-foreground font-bold text-md">
                 Address:
               </Label>
-              <span className="text-foreground max-w-full truncate text-ellipsis w-28">
+              <span className="text-foreground text-sm max-w-full truncate text-ellipsis w-28">
                 <Button
                   onClick={() => handleCopy(pairAddress)}
                   size="icon"
@@ -104,7 +104,8 @@ const PoolItem = ({ pairAddress, tokenA, tokenB }: Pool) => {
                 Add Liquidity
               </Button>
               <Button
-                variant="outline"
+                variant="ghost"
+                size={"sm"}
                 className="w-full border-muted-foreground text-muted-foreground dark:text-foreground"
               >
                 Remove Liquidity

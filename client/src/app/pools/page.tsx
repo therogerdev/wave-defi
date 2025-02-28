@@ -2,29 +2,25 @@
 import { PageWrapper } from "@/components/PageWrapper";
 import PoolItem from "@/components/Pool/PoolItem";
 import { Button } from "@/components/ui/button";
-import { fetchPools, pairListAtom } from "@/store/pairListAtom";
-import { tokenListAtom } from "@/store/tokensAtom";
-import { useAtom, useAtomValue } from "jotai";
+import { pairListAtom } from "@/store/pairListAtom";
+import { useAtom } from "jotai";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export default function PoolPage() {
-  const [tokenPairs, setTokenPairs] = useAtom(pairListAtom);
-  const tokens = useAtomValue(tokenListAtom);
+  const [tokenPairs, refreshPools] = useAtom(pairListAtom);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const pools = await fetchPools();
-      setTokenPairs(pools);
+    setIsLoading(true);
+    const fetchPools = async () => {
+      refreshPools();
       setIsLoading(false);
     };
+    fetchPools();
+  }, [refreshPools]);
 
-    fetchData();
-  }, [setTokenPairs]);
-
-  // TODO: create loading state component
   if (isLoading) {
     return <PageWrapper>Loading...</PageWrapper>;
   }

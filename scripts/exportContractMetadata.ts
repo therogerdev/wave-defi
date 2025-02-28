@@ -37,7 +37,7 @@ export function exportContractMetadata({
     "abis"
   );
 
-  // console.log("Metadata directory:", metadata);
+
 
   if (!fs.existsSync(frontendPath)) {
     fs.mkdirSync(frontendPath, { recursive: true });

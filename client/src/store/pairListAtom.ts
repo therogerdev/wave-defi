@@ -1,10 +1,25 @@
+/**
+ * Fetches a list of all available liquidity pools from the AquaSwap protocol.
+ *
+ * @returns {Promise<Pool[]>} An array of `Pool` objects, each representing a liquidity pool.
+ * @throws {Error} If there is an error fetching the pool data.
+ */
+
+// const fetchPools = async (): Promise<Pool[]> => {
+//    Implementation details omitted for brevity
+// };
+
+/**
+ * An atom that automatically fetches and refreshes the list of available liquidity pools.
+  export const pairListAtom = atomWithRefresh(fetchPools);
+ */
+
 import AquaSwap from "@/abis/AquaSwap.json";
 import LiquidityPoolFactory from "@/abis/LiquidityPoolFactory.json";
 import TokenPairAbi from "@/abis/TokenPair.json";
 import WaveToken from "@/abis/WaveToken.json";
 import { Contract, JsonRpcProvider } from "ethers";
-import { atom } from "jotai";
-
+import { atomWithRefresh } from "jotai/utils";
 const provider = new JsonRpcProvider(process.env.NEXT_PUBLIC_RPC_URL);
 
 export interface Token {
@@ -18,7 +33,7 @@ export interface Pool {
   tokenB: Token;
 }
 
-export const fetchPools = async (): Promise<Pool[]> => {
+const fetchPools = async (): Promise<Pool[]> => {
   try {
     const pairFactory = new Contract(
       LiquidityPoolFactory.address,
@@ -27,7 +42,7 @@ export const fetchPools = async (): Promise<Pool[]> => {
     );
 
     const allPairsLength = await pairFactory.allPairsLength();
-    const allPairs = [];
+    const allPairs: Pool[] = [];
 
     for (let i = 0; i < allPairsLength; i++) {
       const pairAddress = await pairFactory.allPairs(i);
@@ -63,10 +78,4 @@ export const fetchPools = async (): Promise<Pool[]> => {
   }
 };
 
-export const pairListAtom = atom<
-  {
-    pairAddress: `0x${string}`;
-    tokenA: { symbol: string; address: `0x${string}` };
-    tokenB: { symbol: string; address: `0x${string}` };
-  }[]
->([]);
+export const pairListAtom = atomWithRefresh(fetchPools);
