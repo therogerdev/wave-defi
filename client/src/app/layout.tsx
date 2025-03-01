@@ -53,7 +53,7 @@ export default function RootLayout({
               </div>
             </div>
           </ThemeProvider>
-          <Toaster position="top-center" />
+          <Toaster position="top-center" duration={10000} />
         </Web3Provider>
       </body>
     </html>
