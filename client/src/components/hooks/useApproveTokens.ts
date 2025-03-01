@@ -1,7 +1,12 @@
-import { useWriteContract, useWaitForTransactionReceipt } from "wagmi";
+import {
+  useWriteContract,
+  useWaitForTransactionReceipt,
+  useAccount,
+} from "wagmi";
 import { Abi, parseUnits } from "viem";
 import AMMRouter from "@/abis/AMMRouter.json";
 import { Token } from "@/store/pairListAtom";
+import { toast } from "sonner";
 
 export type TokenMap = Record<string, { abi: Abi; decimals: number }>;
 
@@ -11,13 +16,19 @@ export const useApproveTokens = (
   tokens: TokenMap
 ) => {
   const { data: txHash, writeContract, isPending } = useWriteContract();
-
+  const { isConnected } = useAccount();
   const { isLoading, isSuccess } = useWaitForTransactionReceipt({
     hash: txHash,
   });
 
   const handleApproveTokens = async (amounts: string[]) => {
-    if (!tokenA || !tokenB || !tokens || !AMMRouter.address) return;
+    if (!tokenA || !tokenB || !tokens || !AMMRouter.address) {
+      return toast("Error: Invalid input");
+    }
+
+    if (!isConnected) {
+      return toast("Error: Wallet not connected");
+    }
 
     const amountTokenA = parseUnits(
       amounts[0],

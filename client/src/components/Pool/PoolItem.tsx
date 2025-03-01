@@ -7,17 +7,20 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { handleCopy } from "@/lib/utils";
+import { formatNumber, handleCopy } from "@/lib/utils";
 import { Copy } from "lucide-react";
 import { memo, useCallback, useState } from "react";
-import { useAccount } from "wagmi";
+import { useAccount, useReadContract } from "wagmi";
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 import ApproveLpDialog from "./ApproveLpDialog";
 
 import AMMRouter from "@/abis/AMMRouter.json";
-import { Pool } from "@/store/pairListAtom";
+import TokenPairContract from "@/abis/TokenPair.json";
 import { useTokenAllowances } from "@/components/hooks/useTokenAllowances";
+import { Pool } from "@/store/pairListAtom";
+import { formatEther } from "viem";
+import AddLiquidityDialog from "../AddLiquidityDialog";
 import TokenAllowance from "../TokenAllowance";
 
 const routerAddress = AMMRouter.address as `0x${string}`;
@@ -26,12 +29,31 @@ const PoolItem = ({ pairAddress, tokenA, tokenB }: Pool) => {
   const { address: walletAddress } = useAccount();
   const [openDialog, setOpenDialog] = useState(false);
 
+  const { data: reserves } = useReadContract({
+    address: pairAddress,
+    abi: TokenPairContract.abi,
+    functionName: "getReserves",
+  }) as { data?: [bigint, bigint, bigint] };
+
+  const { data: totalSupply } = useReadContract({
+    address: pairAddress,
+    abi: TokenPairContract.abi,
+    functionName: "totalSupply",
+  }) as { data?: bigint };
+
   // Custom Hook for Allowances
   const { allowanceTokenA, allowanceTokenB } = useTokenAllowances({
     tokenA,
     tokenB,
     walletAddress,
     routerAddress,
+  });
+
+  const { data: lpBalance } = useReadContract({
+    address: pairAddress as `0x${string}`,
+    abi: TokenPairContract.abi,
+    functionName: "balanceOf",
+    args: [walletAddress as `0x${string}`],
   });
   const toggleDialog = useCallback(() => setOpenDialog((prev) => !prev), []);
 
@@ -59,15 +81,27 @@ const PoolItem = ({ pairAddress, tokenA, tokenB }: Pool) => {
           <ul>
             <li className="flex justify-between px-2 space-y-2">
               <Label className="text-muted-foreground font-bold text-md">
-                Reserve:
+                {tokenA.symbol} Reserve:
               </Label>
-              <span className="text-foreground text-sm">1239.3235</span>
+              <span className="text-foreground text-sm">
+                {formatEther(reserves?.[0] || BigInt(0))}
+              </span>
+            </li>
+            <li className="flex justify-between px-2 space-y-2">
+              <Label className="text-muted-foreground font-bold text-md">
+                {tokenB.symbol} Reserve:
+              </Label>
+              <span className="text-foreground text-sm">
+                {formatEther(reserves?.[1] || BigInt(0))}
+              </span>
             </li>
             <li className="flex justify-between px-2 space-y-2">
               <Label className="text-muted-foreground font-bold text-md">
                 Total Liquidity:
               </Label>
-              <span className="text-foreground text-sm">1239.3235</span>
+              <span className="text-foreground text-sm">
+                {formatNumber(totalSupply || BigInt(0))}
+              </span>
             </li>
             <TokenAllowance token={tokenA} allowance={allowanceTokenA} />
             <TokenAllowance token={tokenB} allowance={allowanceTokenB} />
@@ -100,9 +134,11 @@ const PoolItem = ({ pairAddress, tokenA, tokenB }: Pool) => {
             </Button>
           ) : (
             <div className="flex w-full justify-between space-x-2">
-              <Button variant="wave" className="w-full">
-                Add Liquidity
-              </Button>
+              <AddLiquidityDialog
+                tokenA={tokenA}
+                tokenB={tokenB}
+                pairAddress={pairAddress}
+              />
               <Button
                 variant="ghost"
                 size={"sm"}
@@ -124,5 +160,4 @@ const PoolItem = ({ pairAddress, tokenA, tokenB }: Pool) => {
     </div>
   );
 };
-
 export default memo(PoolItem);
