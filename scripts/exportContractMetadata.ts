@@ -12,8 +12,8 @@ const path = require("path");
 type ContractMetadata = {
   contractName: string;
   contractAddress: string;
-  contractAbi: string;
-  contractSymbol: string; 
+  contractAbi?: string;
+  contractSymbol?: string;
 };
 
 export function exportContractMetadata({
@@ -26,18 +26,10 @@ export function exportContractMetadata({
     name: contractName,
     address: contractAddress,
     symbol: contractSymbol,
-    abi: JSON.parse(contractAbi),
+    abi: contractAbi ? JSON.parse(contractAbi) : null,
   };
 
-  const frontendPath = path.join(
-    __dirname,
-    "..",
-    "client",
-    "src",
-    "abis"
-  );
-
-
+  const frontendPath = path.join(__dirname, "..", "client", "src", "abis");
 
   if (!fs.existsSync(frontendPath)) {
     fs.mkdirSync(frontendPath, { recursive: true });
@@ -48,20 +40,28 @@ export function exportContractMetadata({
     JSON.stringify(metadata, null, 2)
   );
 
-  // if LiquidityPoolFactory is deployed, then export the LiquidityPoolFactory address
-  if (contractName === "PairFactory") {
-    const liquidityPoolFactoryMetadata = {
-      name: "PairFactory",
-      address: contractAddress,
-      abi: JSON.parse(contractAbi),
-    };
+  // If LiquidityPoolFactory is deployed, store its address
+  if (contractName === "LiquidityPoolFactory") {
     fs.writeFileSync(
       path.join(frontendPath, "liquidityPoolFactory-address.json"),
-      JSON.stringify({ address: liquidityPoolFactoryMetadata.address }, null, 2)
+      JSON.stringify({ address: contractAddress }, null, 2)
     );
   }
 
-  // console.log(
-  //   `✅ The contract ${contractName} has been created on the /frontend/src/contracts`
-  // );
+  console.log(`✅ The contract ${contractName} has been exported to /client/src/abis`);
+}
+
+/**
+ * Copies TokenPair.json from Hardhat artifacts to the frontend `abis/` directory.
+ */
+export function exportTokenPairAbi() {
+  const hardhatArtifactsPath = path.join(__dirname, "..", "artifacts", "contracts", "TokenPair.sol", "TokenPair.json");
+  const frontendPath = path.join(__dirname, "..", "client", "src", "abis", "TokenPair.json");
+
+  if (fs.existsSync(hardhatArtifactsPath)) {
+    fs.copyFileSync(hardhatArtifactsPath, frontendPath);
+    console.log("✅ TokenPair.json copied to /client/src/abis/");
+  } else {
+    console.warn("⚠️ TokenPair.json not found in Hardhat artifacts!");
+  }
 }
