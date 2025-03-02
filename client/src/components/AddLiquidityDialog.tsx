@@ -25,13 +25,12 @@ const AddLiquidityDialog = ({ tokenA, tokenB, pairAddress }: Pool) => {
   const { address: userWalletAddress } = useAccount();
   const [refreshPools] = useAtom(pairListAtom);
   const [open, setOpen] = useState(false);
-
   const { balanceTokenA, balanceTokenB } = useTokenBalances(
     tokenA,
     tokenB,
     userWalletAddress
   );
-  const { data: txHash, writeContractAsync } = useWriteContract();
+  const { writeContractAsync } = useWriteContract();
 
   const {
     register,
