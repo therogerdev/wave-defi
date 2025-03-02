@@ -11,7 +11,7 @@ const TokenAllowance = ({
   allowance: bigint;
 }) => (
   <li className="flex justify-between px-2 space-y-2">
-    <Label className="text-muted-foreground flex items-center font-bold text-md">
+    <Label className="text-accent flex items-center font-bold text-md">
       {token.symbol} Allowance:
       <InfoTooltip
         message={`To provide liquidity, you must first approve the use of your tokens. This allows the contract to access your ${token.symbol} on your behalf.`}

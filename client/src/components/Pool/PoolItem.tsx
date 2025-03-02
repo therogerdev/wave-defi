@@ -21,6 +21,7 @@ import { useTokenAllowances } from "@/components/hooks/useTokenAllowances";
 import { Pool } from "@/store/pairListAtom";
 import { formatEther } from "viem";
 import AddLiquidityDialog from "../AddLiquidityDialog";
+import RemoveLiquidityDialog from "../RemoveLiquidityDialog";
 import TokenAllowance from "../TokenAllowance";
 
 const routerAddress = AMMRouter.address as `0x${string}`;
@@ -75,12 +76,12 @@ const PoolItem = ({ pairAddress, tokenA, tokenB }: Pool) => {
               </AvatarFallback>
             </Avatar>
           </CardTitle>
-          <CardDescription className="font-bold text-lg">{`${tokenA.symbol}/${tokenB.symbol}`}</CardDescription>
+          <CardDescription className="text-primary font-bold text-lg">{`${tokenA.symbol}/${tokenB.symbol}`}</CardDescription>
         </CardHeader>
         <CardContent className="">
           <ul>
             <li className="flex justify-between px-2 space-y-2">
-              <Label className="text-muted-foreground font-bold text-md">
+              <Label className=" text-foreground font-bold text-md">
                 {tokenA.symbol} Reserve:
               </Label>
               <span className="text-foreground text-sm">
@@ -88,7 +89,7 @@ const PoolItem = ({ pairAddress, tokenA, tokenB }: Pool) => {
               </span>
             </li>
             <li className="flex justify-between px-2 space-y-2">
-              <Label className="text-muted-foreground font-bold text-md">
+              <Label className=" text-foreground font-bold text-md">
                 {tokenB.symbol} Reserve:
               </Label>
               <span className="text-foreground text-sm">
@@ -96,7 +97,7 @@ const PoolItem = ({ pairAddress, tokenA, tokenB }: Pool) => {
               </span>
             </li>
             <li className="flex justify-between px-2 space-y-2">
-              <Label className="text-muted-foreground font-bold text-md">
+              <Label className=" text-foreground font-bold text-md">
                 Total Liquidity:
               </Label>
               <span className="text-foreground text-sm">
@@ -106,7 +107,7 @@ const PoolItem = ({ pairAddress, tokenA, tokenB }: Pool) => {
             <TokenAllowance token={tokenA} allowance={allowanceTokenA} />
             <TokenAllowance token={tokenB} allowance={allowanceTokenB} />
             <li className="flex items-center justify-between px-2 space-y-2">
-              <Label className="text-muted-foreground font-bold text-md">
+              <Label className=" text-foreground font-bold text-md">
                 Address:
               </Label>
               <span className="text-foreground text-sm max-w-full truncate text-ellipsis w-28">
@@ -139,13 +140,13 @@ const PoolItem = ({ pairAddress, tokenA, tokenB }: Pool) => {
                 tokenB={tokenB}
                 pairAddress={pairAddress}
               />
-              <Button
-                variant="ghost"
-                size={"sm"}
-                className="w-full border-muted-foreground text-muted-foreground dark:text-foreground"
-              >
-                Remove Liquidity
-              </Button>
+              {!!totalSupply && (
+                <RemoveLiquidityDialog
+                  tokenA={tokenA}
+                  tokenB={tokenB}
+                  pairAddress={pairAddress}
+                />
+              )}
             </div>
           )}
         </CardFooter>

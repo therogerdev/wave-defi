@@ -5,7 +5,8 @@
 @layer base {
   :root {
     --background: linear-gradient(to bottom, #f6f2ff, #ede7ff);
-    --foreground: 224 71.4% 4.1%; /* Dark text for readability */
+    /* --foreground: 224 71.4% 4.1%;  */
+    --foreground: 270 80% 60%;
 
     --card: 271, 100%, 95%;
     --card-foreground: 210 20% 98%;
@@ -44,7 +45,7 @@
 
   .dark {
     --background: linear-gradient(to bottom, #10062f, #030014);
-    --foreground: 210 20% 98%;
+    --foreground: 270 80% 60%;
 
     --card: 240 20% 8%;
     --card-foreground: 210 20% 98%;
@@ -86,14 +87,5 @@
   }
   html {
     @apply bg-background text-foreground font-[var(--font-noto-sans)];
-  }
-}
-
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
   }
 }
