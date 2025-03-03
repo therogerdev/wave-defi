@@ -101,7 +101,7 @@ export function Hero() {
               Start trading
             </motion.span>
             {/* </Link> */}
-            <Link href="/pools" passHref>
+            <Link href="/liquidity/pool" passHref>
               <motion.span
                 className="inline-flex items-center gap-1 text-sm/6 font-semibold text-zinc-900 dark:text-zinc-200"
                 variants={VARIANTS}

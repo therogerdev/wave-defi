@@ -37,10 +37,10 @@ const Navigation: React.FC = () => {
           </NavigationMenuTrigger>
           <NavigationMenuContent className="bg-background dark:bg-gray-800 rounded-lg shadow-lg">
             <ul className="grid gap-3 p-4 w-[350px]">
-              <ListItem href="/pools" title="Pool List">
+              <ListItem href="/liquidity/pool" title="Pool List">
                 See all pools available
               </ListItem>
-              <ListItem href="/pools/create" title="Create Pool">
+              <ListItem href="/liquidity/pool/create" title="Create Pool">
                 Create a new liquidity pool
               </ListItem>
             </ul>
@@ -61,7 +61,7 @@ const ListItem = React.forwardRef<
     <li>
       <NavigationMenuLink asChild>
         <Link
-          href="/pool/positions"
+          href="/liquidity/pool"
           ref={ref}
           className={cn(
             "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground dark:text-accent dark:hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground group",
