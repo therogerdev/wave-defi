@@ -1,4 +1,3 @@
-import { cn } from "@/lib/utils";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -7,7 +6,9 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { cn } from "@/lib/utils";
 import Link from "next/link";
+import React from "react";
 
 type BreadcrumbItemType = {
   label: string;
@@ -18,43 +19,49 @@ export const PageWrapper = ({
   children,
   className,
   breadcrumbs,
+  actions,
 }: {
   children?: React.ReactNode;
   className?: string;
   breadcrumbs?: BreadcrumbItemType[];
+  actions?: React.ReactNode;
 }) => {
   return (
     <div className="min-h-screen absolute pt-20 lg:pt-0 px-4 md:px-0 inset-0 flex flex-col items-center">
       <div className="h-16 w-full" />
-
       <div className="w-full h-full">
         <div className={cn(className, "mx-auto relative top-10 max-w-7xl")}>
-          {breadcrumbs && breadcrumbs.length > 0 && (
-            <Breadcrumb className="my-4">
-              <BreadcrumbList>
-                <BreadcrumbItem>
-                  <Link href={"/"} passHref>
-                    <BreadcrumbLink>{"Home"}</BreadcrumbLink>
+          <div className="flex flex-col lg:flex-row lg:justify-between gap-4">
+            {breadcrumbs && breadcrumbs.length > 0 && (
+              <Breadcrumb className="my-4">
+                <BreadcrumbList>
+                  <Link href={"/"}>
+                    <span>{"Home"}</span>
                   </Link>
-                  <BreadcrumbSeparator />
-                </BreadcrumbItem>
-                {breadcrumbs.map((item, index) => (
-                  <>
-                    {item.href ? (
-                      <Link href={item.href || ""} passHref key={index}>
-                        <BreadcrumbLink href={item.href}>
-                          {item.label}
-                        </BreadcrumbLink>
-                      </Link>
-                    ) : (
-                      <BreadcrumbPage>{item.label}</BreadcrumbPage>
-                    )}
-                    {index < breadcrumbs.length - 1 && <BreadcrumbSeparator />}
-                  </>
-                ))}
-              </BreadcrumbList>
-            </Breadcrumb>
-          )}
+
+                  {breadcrumbs.map((item, index) => (
+                    <React.Fragment key={index}>
+                      <BreadcrumbSeparator />{" "}
+                      <BreadcrumbItem>
+                        {item.href ? (
+                          <Link href={item.href}>
+                            <span className="breadcrumb-link">
+                              {item.label}
+                            </span>
+                          </Link>
+                        ) : (
+                          <BreadcrumbPage>{item.label}</BreadcrumbPage>
+                        )}
+                      </BreadcrumbItem>
+                    </React.Fragment>
+                  ))}
+                </BreadcrumbList>
+              </Breadcrumb>
+            )}
+
+            {actions}
+          </div>
+
           {children}
         </div>
       </div>
