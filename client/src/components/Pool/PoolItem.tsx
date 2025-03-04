@@ -19,9 +19,7 @@ import AMMRouter from "@/abis/AMMRouter.json";
 import TokenPairContract from "@/abis/TokenPair.json";
 import { useTokenAllowances } from "@/components/hooks/useTokenAllowances";
 import { Pool } from "@/store/pairListAtom";
-import { formatEther } from "viem";
-import AddLiquidityDialog from "../AddLiquidityDialog";
-import RemoveLiquidityDialog from "../RemoveLiquidityDialog";
+import Link from "next/link";
 import TokenAllowance from "../TokenAllowance";
 
 const routerAddress = AMMRouter.address as `0x${string}`;
@@ -85,7 +83,7 @@ const PoolItem = ({ pairAddress, tokenA, tokenB }: Pool) => {
                 {tokenA.symbol} Reserve:
               </Label>
               <span className="text-foreground text-sm">
-                {formatEther(reserves?.[0] || BigInt(0))}
+                {formatNumber(reserves?.[0] || BigInt(0))}
               </span>
             </li>
             <li className="flex justify-between px-2 space-y-2">
@@ -93,7 +91,7 @@ const PoolItem = ({ pairAddress, tokenA, tokenB }: Pool) => {
                 {tokenB.symbol} Reserve:
               </Label>
               <span className="text-foreground text-sm">
-                {formatEther(reserves?.[1] || BigInt(0))}
+                {formatNumber(reserves?.[1] || BigInt(0))}
               </span>
             </li>
             <li className="flex justify-between px-2 space-y-2">
@@ -123,8 +121,9 @@ const PoolItem = ({ pairAddress, tokenA, tokenB }: Pool) => {
             </li>
           </ul>
         </CardContent>
+
         <CardFooter>
-          {allowanceTokenA === BigInt(0) && allowanceTokenB === BigInt(0) ? (
+          {allowanceTokenA === BigInt(0) && allowanceTokenB === BigInt(0) && (
             <Button
               onClick={toggleDialog}
               className="w-full"
@@ -133,23 +132,15 @@ const PoolItem = ({ pairAddress, tokenA, tokenB }: Pool) => {
             >
               Approve
             </Button>
-          ) : (
-            <div className="flex w-full justify-between space-x-2">
-              <AddLiquidityDialog
-                tokenA={tokenA}
-                tokenB={tokenB}
-                pairAddress={pairAddress}
-              />
-              {!!totalSupply && (
-                <RemoveLiquidityDialog
-                  tokenA={tokenA}
-                  tokenB={tokenB}
-                  pairAddress={pairAddress}
-                />
-              )}
-            </div>
           )}
         </CardFooter>
+        <div className="w-full flex justify-center items-center py-2">
+          <Link href={`/liquidity/pool/${pairAddress}`}>
+            <Button className="hover:bg-transparent" variant={"ghost"}>
+              See Details
+            </Button>
+          </Link>
+        </div>
       </Card>
       <ApproveLpDialog
         tokenA={tokenA}
