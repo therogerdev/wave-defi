@@ -30,7 +30,7 @@ export default function PoolPage() {
       {tokenPairs.length === 0 ? (
         <>
           <p>No pools found.</p>
-          <Link href={"/pools/create"} passHref>
+          <Link href={"/liquidity/pool/create"} passHref>
             <Button variant={"wave"}>
               <ArrowRight className="mr-2 h-4 w-4" />
               Go To Create Pool
