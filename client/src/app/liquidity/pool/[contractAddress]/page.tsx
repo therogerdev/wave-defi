@@ -1,14 +1,11 @@
 "use client";
+import AMMRouter from "@/abis/AMMRouter.json";
+import TokenPair from "@/abis/TokenPair.json";
+import { useTokenAllowances } from "@/components/hooks/useTokenAllowances";
 import { PageWrapper } from "@/components/PageWrapper";
+import PoolDetailLoading from "@/components/Pool/PoolDetailLoading";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { fetchPoolDetail } from "@/store/pairListAtom";
-import { useQuery } from "@tanstack/react-query";
-import { useParams } from "next/navigation";
-import { useAccount } from "wagmi";
-
-import AMMRouter from "@/abis/AMMRouter.json";
-import { useTokenAllowances } from "@/components/hooks/useTokenAllowances";
 import {
   Card,
   CardContent,
@@ -19,16 +16,19 @@ import {
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { formatNumber, handleCopy } from "@/lib/utils";
+import { fetchPoolDetail } from "@/store/pairListAtom";
+import { useQuery } from "@tanstack/react-query";
 import { Copy } from "lucide-react";
 import Link from "next/link";
-import { useCallback, useState } from "react";
-import { formatEther } from "viem";
+import { useParams, useRouter } from "next/navigation";
+import { useCallback, useMemo, useState } from "react";
+import { useAccount, useReadContract } from "wagmi";
 
 const routerAddress = AMMRouter.address as `0x${string}`;
 
 export const PoolDetail = () => {
-  const [openDialog, setOpenDialog] = useState(false);
-  const { contractAddress } = useParams();
+  const [, setOpenDialog] = useState(false);
+  const contractAddress = useParams().contractAddress as `0x${string}`;
   const { address: walletAddress, isConnected, isConnecting } = useAccount();
   const {
     data: pair,
@@ -42,8 +42,22 @@ export const PoolDetail = () => {
         walletAddress as `0x${string}`
       ),
     staleTime: 1000 * 60 * 5,
-    enabled: !!contractAddress && isConnected,
+    enabled: Boolean(contractAddress && walletAddress && isConnected),
   });
+
+  const router = useRouter();
+
+  const { data: lpAlllowance } = useReadContract({
+    address: contractAddress as `0x${string}`,
+    abi: TokenPair.abi,
+    functionName: "allowance",
+    args: [walletAddress as `0x${string}`, contractAddress as `0x${string}`],
+  }) as { data?: bigint };
+
+  const lpAllowanceBigInt = useMemo(
+    () => BigInt(lpAlllowance || 0),
+    [lpAlllowance]
+  );
 
   const { allowanceTokenA, allowanceTokenB } = useTokenAllowances({
     tokenA: pair?.tokenA,
@@ -52,17 +66,31 @@ export const PoolDetail = () => {
     routerAddress,
   });
 
-  const toggleDialog = useCallback(() => setOpenDialog((prev) => !prev), []);
+  const formattedTotalSupply = useMemo(
+    () => (pair?.totalSupply ? formatNumber(pair?.totalSupply) : "N/A"),
+    [pair?.totalSupply]
+  );
+
+  const toggleDialog = useCallback(() => {
+    setOpenDialog((prev) => !prev);
+  }, []);
 
   if (isLoading || isConnecting) {
-    return <PageWrapper>Loading...</PageWrapper>;
+    return <PoolDetailLoading />;
   }
 
   if (error) {
-    return <PageWrapper>Error loading pool details.</PageWrapper>;
+    return (
+      <PageWrapper>
+        <div className="text-center text-red-500">
+          <p>⚠️ Failed to load pool details.</p>
+          <Button onClick={() => router.back()} className="mt-2">
+            Back
+          </Button>
+        </div>
+      </PageWrapper>
+    );
   }
-
-  console.log("pair", pair?.tokenA);
 
   return (
     <PageWrapper
@@ -70,8 +98,22 @@ export const PoolDetail = () => {
         { label: "Pools", href: "/liquidity/pool" },
         { label: `${pair?.tokenA.symbol} / ${pair?.tokenB.symbol}` },
       ]}
+      actions={
+        <div className="flex justify-between gap-x-4">
+          <Link href={`/liquidity/pool/${pair?.pairAddress}/add-liquidity`}>
+            <Button variant={"wave"} className="w-full">
+              Add Liquidity{" "}
+            </Button>
+          </Link>
+          <Link href={`/liquidity/pool/${pair?.pairAddress}/remove-liquidity`}>
+            <Button variant={"ghost"} className="w-full">
+              Remove Liquidity{" "}
+            </Button>
+          </Link>
+        </div>
+      }
     >
-      <div className="grid grid-cols-3 grid-rows-2 gap-2 ">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-2 px-1 md:px-2 lg:px-4 ">
         <Card className=" col-span-1">
           <CardHeader className="flex flex-row justify-between items-center">
             <CardTitle className="flex ">
@@ -97,9 +139,7 @@ export const PoolDetail = () => {
                   Total Suply
                 </Label>
 
-                <p>
-                  {pair?.totalSupply ? formatNumber(pair?.totalSupply) : "N/A"}
-                </p>
+                <p>{formattedTotalSupply}</p>
               </div>
               <div className="grid gap-2 text-accent">
                 {" "}
@@ -121,25 +161,33 @@ export const PoolDetail = () => {
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2 col-span-2 text-accent">
-                <Label htmlFor="" className="font-bold">
-                  Reserves/Allowance:
+              <div className="grid gap-2 text-accent">
+                <Label htmlFor="reserves" className="font-bold">
+                  Reserves
                 </Label>
+
                 <div className="">
                   <p>
                     {pair?.tokenA.symbol} -{" "}
                     {pair?.reserves?.reserveA
-                      ? formatEther(BigInt(pair.reserves.reserveA))
+                      ? formatNumber(BigInt(pair.reserves.reserveA))
                       : "N/A"}{" "}
-                    / {formatEther(allowanceTokenA)}
                   </p>
                   <p>
                     {pair?.tokenB.symbol} -{" "}
                     {pair?.reserves?.reserveB
-                      ? formatEther(BigInt(pair.reserves.reserveB))
+                      ? formatNumber(BigInt(pair.reserves.reserveB))
                       : "N/A"}{" "}
-                    / {formatEther(allowanceTokenB)}
                   </p>
+                </div>
+              </div>
+              <div className="grid gap-2 text-accent">
+                {" "}
+                <Label htmlFor="lpallowance" className="font-bold">
+                  LP Allowance
+                </Label>
+                <div className="flex items-center">
+                  <p className="">{formatNumber(lpAllowanceBigInt)}</p>
                 </div>
               </div>
             </div>
@@ -157,22 +205,11 @@ export const PoolDetail = () => {
           </CardFooter>
         </Card>
 
-        <Card className=" col-span-2 row-span-2 text-foreground">
-          asdasdasdasdasd
+        <Card className=" col-span-1 md:col-span-2  md:row-span-2 text-foreground">
+          Transactions here
         </Card>
 
-        <Card className=" col-span-1 row-span-1 text-foreground">
-        <Link href={`/liquidity/pool/${pair?.pairAddress}/add-liquidity`}>
-            <Button variant={"wave"} className="w-full">
-              Add Liquidity{" "}
-            </Button>
-          </Link>
-          <Link href={`/liquidity/pool/${pair?.pairAddress}/remove-liquidity`}>
-            <Button variant={"wave"} className="w-full">
-              Remove Liquidity{" "}
-            </Button>
-          </Link>
-        </Card>
+        <Card className=" col-span-1 row-span-1 text-foreground min-h-64"></Card>
       </div>
     </PageWrapper>
   );

@@ -4,8 +4,8 @@ import { tokenMapAtom } from "@/store/tokensAtom";
 import { Token } from "@/store/pairListAtom";
 
 export const useTokenBalances = (
-  tokenA: Token,
-  tokenB: Token,
+  tokenA: Partial<Token>,
+  tokenB: Partial<Token>,
   walletAddress: `0x${string}` | undefined
 ) => {
   const tokens = useAtomValue(tokenMapAtom);
@@ -13,18 +13,21 @@ export const useTokenBalances = (
   const { data: balances } = useReadContracts({
     contracts: [
       {
-        address: tokenA.address,
-        abi: tokens[tokenA.address]?.abi,
+        address: tokenA?.address,
+        abi: tokenA?.address ? tokens[tokenA.address]?.abi : undefined,
         functionName: "balanceOf",
         args: [walletAddress],
       },
       {
-        address: tokenB.address,
-        abi: tokens[tokenB.address]?.abi,
+        address: tokenB?.address,
+        abi: tokenB?.address ? tokens[tokenB.address]?.abi : undefined,
         functionName: "balanceOf",
         args: [walletAddress],
       },
     ],
+    query: {
+      enabled: !!walletAddress && !!tokenA && !!tokenB,
+    },
   });
 
   return {
