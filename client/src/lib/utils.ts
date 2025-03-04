@@ -38,6 +38,6 @@ export const handleCopy = (text: string, label: string = "") => {
 
 export const formatNumber = (value: bigint) =>
   new Intl.NumberFormat("en-US", {
-    notation: "compact",
+    notation: "standard",
     maximumFractionDigits: 2,
   }).format(Number(formatUnits(value, 18)));
