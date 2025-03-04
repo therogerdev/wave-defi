@@ -30,10 +30,10 @@ export const PageWrapper = ({
     <div className="min-h-screen absolute pt-20 lg:pt-0 px-4 md:px-0 inset-0 flex flex-col items-center">
       <div className="h-16 w-full" />
       <div className="w-full h-full">
-        <div className={cn(className, "mx-auto relative top-10 max-w-7xl")}>
+        <div className={cn(className, "mx-auto relative top-5 max-w-7xl")}>
           <div className="flex flex-col lg:flex-row lg:justify-between gap-4">
             {breadcrumbs && breadcrumbs.length > 0 && (
-              <Breadcrumb className="my-4">
+              <Breadcrumb className="my-4 hidden md:block">
                 <BreadcrumbList>
                   <Link href={"/"}>
                     <span>{"Home"}</span>
@@ -59,7 +59,7 @@ export const PageWrapper = ({
               </Breadcrumb>
             )}
 
-            {actions}
+            <div className="my-3 md:my-0">{actions}</div>
           </div>
 
           {children}
