@@ -26,6 +26,7 @@ import { useTokenBalances } from "../hooks/useTokenBalances";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
+import { DialogTrigger } from "@radix-ui/react-dialog";
 
 interface ApproveLpDialogProps extends Pool {
   open: boolean;
@@ -78,6 +79,16 @@ const ApproveLpDialog = ({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="border-none bg-card rounded-lg">
         <DialogHeader>
+          <DialogTrigger asChild>
+            <Button
+              disabled={isPending}
+              className="w-full"
+              size="lg"
+              variant="wave"
+            >
+              Approve
+            </Button>
+          </DialogTrigger>
           <DialogTitle>Approve LP Tokens</DialogTitle>
           <DialogDescription className="pr-3">
             Approve {tokenA.symbol} and {tokenB.symbol} to allow the contract to

@@ -19,7 +19,9 @@ import LiquidityPoolFactory from "@/abis/LiquidityPoolFactory.json";
 import TokenPairAbi from "@/abis/TokenPair.json";
 import WaveToken from "@/abis/WaveToken.json";
 import { Contract, JsonRpcProvider } from "ethers";
+import { atom } from "jotai";
 import { atomWithRefresh } from "jotai/utils";
+import { useAccount } from "wagmi";
 const provider = new JsonRpcProvider(process.env.NEXT_PUBLIC_RPC_URL);
 
 export interface Token {
@@ -75,6 +77,77 @@ const fetchPools = async (): Promise<Pool[]> => {
       error instanceof Error ? error.message : String(error)
     );
     return [];
+  }
+};
+
+type PoolDetail = {
+  pairAddress: string;
+  tokenA: Token;
+  tokenB: Token;
+  reserves: { reserveA: bigint; reserveB: bigint };
+  allowance: { tokenA: bigint; tokenB: bigint };
+  totalSupply: bigint;
+};
+
+export const poolDetailAtom = atom({
+  key: "poolDetail",
+  default: null,
+});
+export const fetchPoolDetail = async (
+  pairAddress: `0x${string}`,
+  walletAddress: `0x${string}`
+): Promise<PoolDetail | null> => {
+  try {
+    const pairContract = new Contract(pairAddress, TokenPairAbi.abi, provider);
+
+    // Fetch token addresses
+    const tokenA = await pairContract.tokenA();
+    const tokenB = await pairContract.tokenB();
+
+    // Create contract instances for tokens
+    const tokenAContract = new Contract(tokenA, AquaSwap.abi, provider);
+    const tokenBContract = new Contract(tokenB, WaveToken.abi, provider);
+
+    // Fetch symbols
+    const tokenASymbol = await tokenAContract.symbol();
+    const tokenBSymbol = await tokenBContract.symbol();
+
+    // Fetch reserves
+    const { _reserveA, _reserveB } = await pairContract.getReserves();
+
+    // Fetch Total Supply
+    const totalSupply = await pairContract.totalSupply();
+
+    // Fetch allowances
+    const allowanceTokenA = await tokenAContract.allowance(
+      pairAddress,
+      walletAddress
+    );
+    const allowanceTokenB = await tokenBContract.allowance(
+      pairAddress,
+      walletAddress
+    );
+
+    return {
+      pairAddress,
+      tokenA: { symbol: tokenASymbol, address: tokenA },
+      tokenB: { symbol: tokenBSymbol, address: tokenB },
+      reserves: {
+        reserveA: _reserveA.toString(),
+        reserveB: _reserveB.toString(),
+      },
+      allowance: {
+        tokenA: allowanceTokenA,
+        tokenB: allowanceTokenB,
+      },
+      totalSupply: totalSupply,
+    };
+  } catch (error) {
+    console.error(
+      "🚨 Error fetching pool details:",
+      error instanceof Error ? error.message : String(error)
+    );
+    return null;
   }
 };
 
