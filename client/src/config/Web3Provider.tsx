@@ -1,6 +1,6 @@
 "use client";
-import { defineChain } from "viem";
-import { WagmiProvider, createConfig, http } from "wagmi";
+import { defineChain, createPublicClient, http } from "viem";
+import { WagmiProvider, createConfig } from "wagmi";
 import { sepolia } from "wagmi/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ConnectKitProvider, getDefaultConfig } from "connectkit";
@@ -12,6 +12,11 @@ export const localhost = defineChain({
   rpcUrls: {
     default: { http: ["http://127.0.0.1:8545"] },
   },
+});
+
+export const publicClient = createPublicClient({
+  chain: localhost,
+  transport: http(),
 });
 
 export const config = createConfig(
