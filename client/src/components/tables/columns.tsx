@@ -47,15 +47,14 @@ export const transactionColumns: ColumnDef<TransactionsEvents>[] = [
   {
     accessorKey: "amount",
     header: "Amount",
-    cell: ({ row }) =>
-      formatNumber(row.original.amount), 
+    cell: ({ row }) => formatNumber(row.original.amount),
   },
   {
     accessorKey: "transactionHash",
     header: "Transaction",
     cell: ({ row }) => (
       <a
-        href={`https://etherscan.com/tx/${row.original.transactionHash}`} 
+        href={`https://etherscan.com/tx/${row.original.transactionHash}`}
         target="_blank"
         rel="noopener noreferrer"
         className="text-blue-500 hover:underline"

@@ -2,8 +2,11 @@
 import AMMRouter from "@/abis/AMMRouter.json";
 import TokenPair from "@/abis/TokenPair.json";
 import { useTokenAllowances } from "@/components/hooks/useTokenAllowances";
+import useTransactions from "@/components/hooks/useTransactions";
 import { PageWrapper } from "@/components/PageWrapper";
 import PoolDetailLoading from "@/components/Pool/PoolDetailLoading";
+import { transactionColumns } from "@/components/tables/columns";
+import TransactionsTable from "@/components/tables/TransactionsTable";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,7 +17,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { DataTable } from "@/components/ui/data-table";
 import { Label } from "@/components/ui/label";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { formatNumber, handleCopy } from "@/lib/utils";
 import { fetchPoolDetail } from "@/store/pairListAtom";
 import { useQuery } from "@tanstack/react-query";
@@ -27,8 +32,8 @@ import { useAccount, useReadContract } from "wagmi";
 const routerAddress = AMMRouter.address as `0x${string}`;
 
 export const PoolDetail = () => {
-  const [, setOpenDialog] = useState(false);
   const contractAddress = useParams().contractAddress as `0x${string}`;
+  const [, setOpenDialog] = useState(false);
   const { address: walletAddress, isConnected, isConnecting } = useAccount();
   const {
     data: pair,
@@ -113,7 +118,7 @@ export const PoolDetail = () => {
         </div>
       }
     >
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-2 px-1 md:px-2 lg:px-4 ">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-2 px-1 md:px-2 lg:px-4">
         <Card className=" col-span-1">
           <CardHeader className="flex flex-row justify-between items-center">
             <CardTitle className="flex ">
@@ -205,8 +210,13 @@ export const PoolDetail = () => {
           </CardFooter>
         </Card>
 
-        <Card className=" col-span-1 md:col-span-2  md:row-span-2 text-foreground">
-          Transactions here
+        <Card className="col-span-1 md:col-span-2 md:row-span-2 text-foreground flex flex-col min-h-[600px] ">
+          <h2 className="text-lg font-bold p-4">Pair Transactions</h2>
+          <ScrollArea className="flex-1 overflow-auto">
+            <TransactionsTable
+              contractAddress={pair?.pairAddress as `0x${string}`}
+            />
+          </ScrollArea>
         </Card>
 
         <Card className=" col-span-1 row-span-1 text-foreground min-h-64"></Card>
